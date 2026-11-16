@@ -106,6 +106,11 @@ h2{font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
 .revise .pc{color:var(--bad);font-weight:800}
 .hero{background:var(--card);color:var(--ink);border:1px solid var(--line)}
 
+.fig{margin:14px -4px 0;text-align:center}
+.fig svg{width:100%;height:auto;display:block;margin:0 auto;overflow:visible}
+.fignote{font-size:12px;color:var(--muted);font-style:italic;margin-top:4px}
+.fb .fig{background:#fff;border-radius:12px;padding:10px 8px 8px;margin:10px 0 0}
+
 .foot a,.note a{color:var(--navy);font-weight:600}
 </style>
 </head>
@@ -273,6 +278,185 @@ const CH=[
  {id:13,ms:'Teorem Pythagoras',en:'The Pythagorean Theorem'}
 ];
 
+
+/* ---------- diagrams (SVG generated per question) ---------- */
+const D2R=Math.PI/180;
+const pt=(p,r,deg)=>[p[0]+r*Math.cos(deg*D2R),p[1]-r*Math.sin(deg*D2R)];   // math angle, SVG y-down
+const dirTo=(p,q)=>Math.atan2(-(q[1]-p[1]),q[0]-p[0])/D2R;
+const nrm=d=>((d%360)+360)%360;
+class Fig{
+ constructor(){this.el=[];this.bb=[1e9,1e9,-1e9,-1e9]}
+ grow(x,y){const b=this.bb;b[0]=Math.min(b[0],x);b[1]=Math.min(b[1],y);b[2]=Math.max(b[2],x);b[3]=Math.max(b[3],y)}
+ line(p,q,o={}){this.grow(...p);this.grow(...q);this.el.push(`<line x1="${p[0].toFixed(1)}" y1="${p[1].toFixed(1)}" x2="${q[0].toFixed(1)}" y2="${q[1].toFixed(1)}" stroke="${o.c||'var(--navy)'}" stroke-width="${o.w||2.5}" ${o.dash?'stroke-dasharray="6 5"':''} stroke-linecap="round"/>`);return this}
+ poly(ps,o={}){ps.forEach(p=>this.grow(...p));this.el.push(`<polygon points="${ps.map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' ')}" fill="${o.fill||'rgba(244,162,97,.13)'}" stroke="${o.c||'var(--navy)'}" stroke-width="${o.w||2.5}" stroke-linejoin="round"/>`);return this}
+ rect(x,y,w,h,o={}){this.grow(x,y);this.grow(x+w,y+h);this.el.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${o.rx||0}" fill="${o.fill||'none'}" stroke="${o.c||'var(--navy)'}" stroke-width="${o.w??2.5}"/>`);return this}
+ circle(p,r,o={}){this.grow(p[0]-r,p[1]-r);this.grow(p[0]+r,p[1]+r);this.el.push(`<circle cx="${p[0]}" cy="${p[1]}" r="${r}" fill="${o.fill||'none'}" stroke="${o.c||'var(--navy)'}" stroke-width="${o.w||2.5}"/>`);return this}
+ path(d,o={}){this.el.push(`<path d="${d}" fill="${o.fill||'none'}" stroke="${o.c||'var(--navy)'}" stroke-width="${o.w||2}"/>`);return this}
+ text(p,s,o={}){const sz=o.size||15,w=String(s).length*sz*.55;const a=o.anchor||'middle';
+  const x0=a==='middle'?p[0]-w/2:a==='end'?p[0]-w:p[0];this.grow(x0-2,p[1]-sz*.8);this.grow(x0+w+2,p[1]+sz*.35);
+  const unk=s==='?'||o.unk;this.el.push(`<text x="${p[0].toFixed(1)}" y="${(p[1]+sz*.35).toFixed(1)}" text-anchor="${a}" font-size="${unk?sz+3:sz}" font-weight="${unk||o.bold?800:600}" fill="${unk?'#e76f51':(o.c||'var(--ink)')}" font-family="Plus Jakarta Sans,system-ui,sans-serif">${s}</text>`);return this}
+ /* angle mark at vertex V from direction d1 counter-clockwise to d2, with label on the bisector */
+ angle(V,d1,d2,label,o={}){const sw=nrm(d2-d1),r=o.r||(sw<40?34:24);
+  if(Math.abs(sw-90)<.5&&!o.arc){const s=13,a=pt(V,s,d1),b=pt(a,s,d1+90),c=pt(V,s,d2);this.el.push(`<polyline points="${a.join(',')} ${b.join(',')} ${c.join(',')}" fill="none" stroke="var(--navy)" stroke-width="1.8"/>`)}
+  else{const a=pt(V,r,d1),b=pt(V,r,d1+sw),A=`${a[0].toFixed(1)},${a[1].toFixed(1)}`,B=`${b[0].toFixed(1)},${b[1].toFixed(1)}`,arc=`A${r},${r} 0 ${sw>180?1:0} 0 ${B}`,u=label==='?';
+   this.el.push(`<path d="M${V[0]},${V[1]} L${A} ${arc} Z" fill="${u?'rgba(231,111,81,.15)':'rgba(29,53,87,.08)'}" stroke="none"/><path d="M${A} ${arc}" fill="none" stroke="${u?'#e76f51':'var(--navy)'}" stroke-width="1.8"/>`)}
+  if(label!=null)this.text(pt(V,o.lr||r+(sw<40?22:20),d1+sw/2),label);return this}
+ tick(p,q,n=1){const m=[(p[0]+q[0])/2,(p[1]+q[1])/2],d=dirTo(p,q);for(let i=0;i<n;i++){const c=pt(m,(i-(n-1)/2)*6,d);this.line(pt(c,7,d+90),pt(c,7,d-90),{w:2})}return this}
+ svg(note){const b=this.bb,pad=12,w=b[2]-b[0]+pad*2,h=b[3]-b[1]+pad*2;
+  return `<div class="fig"><svg viewBox="${(b[0]-pad).toFixed(0)} ${(b[1]-pad).toFixed(0)} ${w.toFixed(0)} ${h.toFixed(0)}" style="max-height:${Math.min(240,h*1.15)}px" role="img">${this.el.join('')}</svg>${note?`<div class="fignote">${L(note)}</div>`:''}</div>`}
+}
+const NOSCALE=T('Rajah tidak dilukis mengikut skala','Diagram not drawn to scale');
+const deg=x=>x+'°';
+
+/* ---- Bab 8: Garis dan Sudut ---- */
+G[8]=function(){
+ const t=R(0,4),V=[0,0],F=new Fig();
+ if(t===0){const a=R(15,75);
+  F.line(V,pt(V,150,0)).line(V,pt(V,130,90)).line(V,pt(V,145,a)).angle(V,0,a,deg(a),{r:40}).angle(V,a,90,'?',{r:52});
+  F.angle(V,0,90,null);
+  return{q:T(`Dalam rajah, cari nilai ?`,`In the diagram, find the value of ?`),fig:F.svg(),a:`${90-a}°`,w:[`${180-a}°`,`${360-a}°`,`${Math.abs(90-a-10)||1}°`],
+   sol:T(`Sudut tegak = 90°, jadi sudut-sudut ini saling pelengkap.\n? = 90° − ${a}° = ${90-a}°`,`A right angle = 90°, so the angles are complementary.\n? = 90° − ${a}° = ${90-a}°`)}}
+ if(t===1){const a=R(25,155);
+  F.line(pt(V,150,180),pt(V,150,0)).line(V,pt(V,130,a)).angle(V,0,a,deg(a),{r:30}).angle(V,a,180,'?',{r:42});
+  return{q:T(`Dalam rajah, cari nilai ?`,`In the diagram, find the value of ?`),fig:F.svg(),a:`${180-a}°`,w:[`${Math.abs(90-a)||5}°`,`${360-a}°`,`${180-a+10}°`],
+   sol:T(`Sudut pada garis lurus berjumlah 180°.\n? = 180° − ${a}° = ${180-a}°`,`Angles on a straight line add up to 180°.\n? = 180° − ${a}° = ${180-a}°`)}}
+ if(t===2){const a=R(70,140),b=R(70,140),s=90;
+  [s,s+a,s+a+b].forEach(d=>F.line(V,pt(V,120,d)));
+  F.angle(V,s,s+a,deg(a),{r:26}).angle(V,s+a,s+a+b,deg(b),{r:26}).angle(V,s+a+b,s+360,'?',{r:26});
+  return{q:T(`Dalam rajah, tiga garis bertemu pada satu titik. Cari nilai ?`,`In the diagram, three lines meet at a point. Find the value of ?`),fig:F.svg(),a:`${360-a-b}°`,w:[`${Math.abs(180-a-b)||10}°`,`${360-a}°`,`${a+b}°`].filter(x=>x!==`${360-a-b}°`),
+   sol:T(`Sudut pada satu titik berjumlah 360°.\n? = 360° − ${a}° − ${b}° = ${360-a-b}°`,`Angles at a point add up to 360°.\n? = 360° − ${a}° − ${b}° = ${360-a-b}°`)}}
+ if(t===3){const a=R(35,145),s=R(5,25);
+  F.line(pt(V,140,s),pt(V,140,s+180)).line(pt(V,140,s+a),pt(V,140,s+a+180));
+  F.angle(V,s,s+a,deg(a),{r:28}).angle(V,s+180,s+180+a,'?',{r:28});
+  return{q:T(`Dua garis lurus bersilang. Cari nilai ?`,`Two straight lines intersect. Find the value of ?`),fig:F.svg(),a:`${a}°`,w:[`${180-a}°`,`${360-a}°`,`${Math.abs(90-a)||45}°`],
+   sol:T(`? dan ${a}° ialah sudut bertentang bucu — nilainya sama.\n? = ${a}°`,`? and ${a}° are vertically opposite angles — they are equal.\n? = ${a}°`)}}
+ const a=R(30,95),b=R(25,150-a-5);
+ F.line(pt(V,150,180),pt(V,150,0)).line(V,pt(V,130,a)).line(V,pt(V,130,a+b));
+ F.angle(V,0,a,deg(a),{r:30}).angle(V,a,a+b,deg(b),{r:30}).angle(V,a+b,180,'?',{r:30});
+ return{q:T(`Dalam rajah, cari nilai ?`,`In the diagram, find the value of ?`),fig:F.svg(),a:`${180-a-b}°`,w:[`${360-a-b}°`,`90°`,`${a+b}°`].filter(x=>x!==`${180-a-b}°`),
+  sol:T(`Sudut pada garis lurus berjumlah 180°.\n? = 180° − ${a}° − ${b}° = ${180-a-b}°`,`Angles on a straight line add up to 180°.\n? = 180° − ${a}° − ${b}° = ${180-a-b}°`)};
+};
+
+/* triangle from base length and two base angles */
+function triangle(a,b,base=220){const L0=[0,0],R0=[base,0];const len=base*Math.sin(b*D2R)/Math.sin((a+b)*D2R);const T0=pt(L0,len,a);return[L0,R0,T0]}
+
+/* ---- Bab 9: Poligon Asas ---- */
+G[9]=function(){
+ const t=R(0,3),F=new Fig();
+ if(t===0){const a=R(35,95),b=R(35,145-a);const [A,B,C]=triangle(a,b);const c=180-a-b;
+  F.poly([A,B,C]).angle(A,0,a,deg(a)).angle(B,180-b,180,deg(b)).angle(C,dirTo(C,A),dirTo(C,B)+(dirTo(C,B)<dirTo(C,A)?360:0),'?');
+  return{q:T(`Cari nilai ? dalam segi tiga di bawah.`,`Find the value of ? in the triangle below.`),fig:F.svg(),a:`${c}°`,w:[`${360-a-b}°`,`${a+b}°`,`${c+10}°`],
+   sol:T(`Hasil tambah sudut pedalaman segi tiga = 180°.\n? = 180° − ${a}° − ${b}° = ${c}°`,`Interior angles of a triangle add up to 180°.\n? = 180° − ${a}° − ${b}° = ${c}°`)}}
+ if(t===1){const ap=R(10,70)*2,base=(180-ap)/2;const [A,B,C]=triangle(base,base);
+  F.poly([A,B,C]).tick(A,C).tick(B,C).angle(A,0,base,'?').angle(B,180-base,180,'?').angle(C,dirTo(C,A),dirTo(C,B)+360,deg(ap));
+  return{q:T(`Segi tiga di bawah ialah segi tiga sama kaki. Cari nilai ?`,`The triangle below is isosceles. Find the value of ?`),fig:F.svg(),a:`${base}°`,w:[`${180-ap}°`,`${ap}°`,`${base+10}°`].filter(x=>x!==`${base}°`),
+   sol:T(`Dua sisi sama panjang → dua sudut tapak sama besar.\n? = (180° − ${ap}°) ÷ 2 = ${base}°`,`Two equal sides → two equal base angles.\n? = (180° − ${ap}°) ÷ 2 = ${base}°`)}}
+ if(t===2){const a=R(60,120),b=R(60,120),c=R(50,110);const d=360-a-b-c;
+  const P=[[0,140],[230,155],[205,15],[45,0]],cen=[120,78],lab=[deg(a),deg(b),deg(c),'?'];
+  F.poly(P);P.forEach((v,i)=>{const dd=dirTo(v,cen);F.text(pt(v,40,dd),lab[i])});
+  return{q:T(`Cari nilai ? dalam sisi empat di bawah.`,`Find the value of ? in the quadrilateral below.`),fig:F.svg(NOSCALE),a:`${d}°`,w:[`${Math.abs(180-a-b)+c}°`,`${360-a-b}°`,`${d+20}°`].filter(x=>x!==`${d}°`),
+   sol:T(`Hasil tambah sudut pedalaman sisi empat = 360°.\n? = 360° − ${a}° − ${b}° − ${c}° = ${d}°`,`Interior angles of a quadrilateral add up to 360°.\n? = 360° − ${a}° − ${b}° − ${c}° = ${d}°`)}}
+ const a=R(50,130),h=110,dx=h/Math.tan(a*D2R);const A=[0,0],B=[200,0],C=[200+dx,-h],Dd=[dx,-h];
+ F.poly([A,B,C,Dd]).angle(A,0,a,deg(a)).angle(B,a,180,'?');
+ return{q:T(`Rajah menunjukkan sebuah segi empat selari. Cari nilai ?`,`The diagram shows a parallelogram. Find the value of ?`),fig:F.svg(),a:`${180-a}°`,w:[`${a}°`,`${360-a}°`,`${Math.abs(90-a)||30}°`].filter(x=>x!==`${180-a}°`),
+  sol:T(`Sudut bersebelahan dalam segi empat selari berjumlah 180°.\n? = 180° − ${a}° = ${180-a}°`,`Adjacent angles in a parallelogram add up to 180°.\n? = 180° − ${a}° = ${180-a}°`)};
+};
+
+/* ---- Bab 10: Perimeter dan Luas ---- */
+G[10]=function(){
+ const t=R(0,2),F=new Fig();
+ if(t<2){const l=R(4,20),w=R(2,Math.min(15,l));const k=200/Math.max(l,w*1.6),W=l*k,H=Math.max(w*k,40);
+  F.rect(0,0,W,H,{fill:'rgba(244,162,97,.13)'});[[0,0,270],[W,0,180],[W,H,90],[0,H,0]].forEach(([x,y,d])=>F.angle([x,y],d,d+90,null));
+  F.text([W/2,H+20],`${l} cm`).text([W+12,H/2],`${w} cm`,{anchor:'start'});
+  if(t===0)return{q:T(`Cari luas segi empat tepat di bawah.`,`Find the area of the rectangle below.`),fig:F.svg(),a:`${l*w} cm²`,w:[`${2*(l+w)} cm²`,`${l+w} cm²`,`${l*w/2} cm²`],
+   sol:T(`Luas = panjang × lebar\n= ${l} cm × ${w} cm = ${l*w} cm²`,`Area = length × width\n= ${l} cm × ${w} cm = ${l*w} cm²`)};
+  return{q:T(`Cari perimeter segi empat tepat di bawah.`,`Find the perimeter of the rectangle below.`),fig:F.svg(),a:`${2*(l+w)} cm`,w:[`${l*w} cm`,`${l+w} cm`,`${4*l} cm`],
+   sol:T(`Perimeter = jumlah semua sisi\n= ${l} + ${w} + ${l} + ${w} = ${2*(l+w)} cm`,`Perimeter = sum of all sides\n= ${l} + ${w} + ${l} + ${w} = ${2*(l+w)} cm`)}}
+ const bse=R(2,12)*2,h=R(3,15);const k=200/Math.max(bse,h*1.4),H=h*k,B=Math.max(bse*k,H*1.1),off=B*P([.3,.45,.65]);
+ F.poly([[0,0],[B,0],[off,-H]]).line([off,0],[off,-H],{dash:1,w:2}).angle([off,0],90,180,null);
+ const lft=off>B/2;F.text([B/2,20],`${bse} cm`).text([off+(lft?-10:10),-H*0.3],`${h} cm`,{anchor:lft?'end':'start'});
+ return{q:T(`Cari luas segi tiga di bawah.`,`Find the area of the triangle below.`),fig:F.svg(bse*k<H*1.1?NOSCALE:null),a:`${bse*h/2} cm²`,w:[`${bse*h} cm²`,`${bse+h} cm²`,`${bse*h/2+h} cm²`],
+  sol:T(`Luas = ½ × tapak × tinggi\n= ½ × ${bse} × ${h} = ${bse*h/2} cm²`,`Area = ½ × base × height\n= ½ × ${bse} × ${h} = ${bse*h/2} cm²`)};
+};
+
+/* ---- Bab 11: Pengenalan Set (Venn for complement) ---- */
+const _g11=G[11];
+G[11]=function(){
+ if(Math.random()<.6)return _g11();
+ const u=R(15,40),a=R(4,u-3),F=new Fig();
+ F.rect(0,0,260,160,{fill:'rgba(231,111,81,.12)',rx:6}).circle([110,82],56,{fill:'#fff'});
+ F.text([14,16],'ξ',{anchor:'start',bold:1}).text([62,30],'A',{bold:1}).text([110,82],`n(A) = ${a}`).text([215,135],'?');
+ F.text([255,-12],`n(ξ) = ${u}`,{anchor:'end'});
+ return{q:T(`Rajah Venn menunjukkan set ξ dan set A. Cari n(A'), iaitu kawasan berlorek.`,`The Venn diagram shows sets ξ and A. Find n(A'), the shaded region.`),fig:F.svg(),a:u-a,w:[u+a,a,u],
+  sol:T(`A' ialah unsur dalam ξ yang bukan dalam A.\nn(A') = n(ξ) − n(A) = ${u} − ${a} = ${u-a}`,`A' is the elements of ξ not in A.\nn(A') = n(ξ) − n(A) = ${u} − ${a} = ${u-a}`)};
+};
+
+/* ---- Bab 12: Pengendalian Data (bar chart, pie chart) ---- */
+const _g12=G[12];
+G[12]=function(){
+ const t=R(0,2);
+ if(t===0)return _g12();
+ const F=new Fig();
+ if(t===1){const tot=P([20,24,30,36,40,45,60,72,90]);let n;do{n=R(2,Math.floor(tot*.45))}while((n*360)%tot!==0);const ang=n*360/tot;
+  const it=P([T('bola sepak','football'),T('badminton','badminton'),T('bola jaring','netball'),T('sepak takraw','sepak takraw')]);
+  const C=[0,0],r=80,s=90,e=90+ang,p1=pt(C,r,s),p2=pt(C,r,e);
+  F.circle(C,r,{fill:'#fff'});F.el.push(`<path d="M0,0 L${p1[0].toFixed(1)},${p1[1].toFixed(1)} A${r},${r} 0 ${ang>180?1:0} 0 ${p2[0].toFixed(1)},${p2[1].toFixed(1)} Z" fill="rgba(244,162,97,.45)" stroke="var(--navy)" stroke-width="2.5"/>`);
+  F.angle(C,s,e,'?',{r:22,lr:40});F.text(pt(C,r+26,s+ang/2),L(it),{size:13,anchor:Math.cos((s+ang/2)*D2R)<0?'end':'start'});
+  return{q:T(`${n} daripada ${tot} murid memilih ${it.ms}. Cari sudut ? bagi sektor ${it.ms} dalam carta pai.`,`${n} out of ${tot} pupils chose ${it.en}. Find the angle ? of the ${it.en} sector in the pie chart.`),fig:F.svg(),a:`${ang}°`,w:[`${n}°`,`${Math.round(n/tot*100)}°`,`${ang+10}°`].filter(x=>x!==`${ang}°`),
+   sol:T(`Sudut sektor = (${n} ÷ ${tot}) × 360°\n= ${ang}°`,`Sector angle = (${n} ÷ ${tot}) × 360°\n= ${ang}°`)}}
+ const days=lang==='ms'?['Isn','Sel','Rab','Kha','Jum']:['Mon','Tue','Wed','Thu','Fri'],full=lang==='ms'?['Isnin','Selasa','Rabu','Khamis','Jumaat']:['Monday','Tuesday','Wednesday','Thursday','Friday'];
+ const fr=days.map(()=>R(2,15)*2);const i=R(0,4);let j;do{j=R(0,4)}while(j===i||fr[j]===fr[i]);const d=Math.abs(fr[i]-fr[j]);
+ const H=160,k=H/32;for(let g=0;g<=32;g+=2){F.line([0,-g*k],[270,-g*k],{w:g?(g%4?0.5:1):2,c:g?'#d9d3c6':'var(--navy)'});if(g%4===0)F.text([-8,-g*k],g,{anchor:'end',size:11})}
+ fr.forEach((v,x)=>{const X=14+x*52;F.rect(X,-v*k,34,v*k,{fill:x===i||x===j?'rgba(244,162,97,.85)':'rgba(29,53,87,.75)',w:0});F.text([X+17,16],days[x],{size:12})});
+ F.line([0,0],[0,-H-6]);
+ return{q:T(`Carta palang menunjukkan bilangan buku yang dipinjam dari perpustakaan. Berapakah beza antara ${full[i]} dan ${full[j]}?`,`The bar chart shows the number of books borrowed from the library. What is the difference between ${full[i]} and ${full[j]}?`),fig:F.svg(),a:d,w:[fr[i]+fr[j],d+2,d+4],
+  sol:T(`Baca nilai pada paksi mencancang:\n${full[i]} = ${fr[i]}, ${full[j]} = ${fr[j]}\nBeza = ${Math.max(fr[i],fr[j])} − ${Math.min(fr[i],fr[j])} = ${d}`,`Read the values on the vertical axis:\n${full[i]} = ${fr[i]}, ${full[j]} = ${fr[j]}\nDifference = ${Math.max(fr[i],fr[j])} − ${Math.min(fr[i],fr[j])} = ${d}`)};
+};
+
+/* ---- Bab 13: Teorem Pythagoras ---- */
+G[13]=function(){
+ const [p,q,r]=P([[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]]);const k=p===3?R(1,4):1;let a=p*k,b=q*k,c=r*k;
+ if(Math.random()<.5)[a,b]=[b,a];
+ const s=190/Math.max(a,b*1.3),A=[0,0],B=[a*s,0],C=[0,-b*s],F=new Fig();
+ F.poly([A,B,C]).angle(A,0,90,null);
+ const hyp=Math.random()<.5;
+ F.text([a*s/2,20],`${a} cm`).text([-10,-b*s/2],hyp?`${b} cm`:'?',{anchor:'end'}).text([a*s/2+14,-b*s/2-8],hyp?'?':`${c} cm`,{anchor:'start'});
+ if(hyp)return{q:T(`Cari panjang hipotenus, ?`,`Find the length of the hypotenuse, ?`),fig:F.svg(),a:`${c} cm`,w:[`${a+b} cm`,`${c+1} cm`,`${Math.abs(b-a)+c-1} cm`],
+  sol:T(`?² = ${a}² + ${b}² = ${a*a} + ${b*b} = ${c*c}\n? = √${c*c} = ${c} cm`,`?² = ${a}² + ${b}² = ${a*a} + ${b*b} = ${c*c}\n? = √${c*c} = ${c} cm`)};
+ return{q:T(`Cari panjang sisi ?`,`Find the length of side ?`),fig:F.svg(),a:`${b} cm`,w:[`${c-a} cm`,`${c+a} cm`,`${b+1} cm`],
+  sol:T(`Hipotenus ialah sisi terpanjang (${c} cm).\n?² = ${c}² − ${a}² = ${c*c} − ${a*a} = ${b*b}\n? = √${b*b} = ${b} cm`,`The hypotenuse is the longest side (${c} cm).\n?² = ${c}² − ${a}² = ${c*c} − ${a*a} = ${b*b}\n? = √${b*b} = ${b} cm`)};
+};
+
+/* ---- Bab 1: number line in the worked solution for + and − ---- */
+const _g1=G[1];
+G[1]=function(){
+ const g=_g1();const m=/^\(?(−?\d+)\)? ([+−]) \(?(−?\d+)\)?$/.exec(g.m||'');
+ if(!m)return g;
+ const num=s=>parseInt(s.replace('−','-'));const a=num(m[1]),b=num(m[3]),res=m[2]==='+'?a+b:a-b;
+ const lo=Math.min(0,a,res)-1,hi=Math.max(0,a,res)+1,span=hi-lo,u=Math.min(26,300/span),F=new Fig();const X=v=>(v-lo)*u;
+ F.line([X(lo),0],[X(hi),0],{w:2});const step=span>24?5:span>12?2:1;
+ for(let v=lo;v<=hi;v++){F.line([X(v),-5],[X(v),5],{w:v===0?2.5:1.2});if(v%step===0||v===a||v===res)F.text([X(v),20],f(v),{size:11,bold:v===a||v===res})}
+ const y=-22;F.line([X(a),y],[X(res),y],{c:'#e76f51',w:3});const dir=res>a?1:-1;F.poly([[X(res),y],[X(res)-dir*9,y-6],[X(res)-dir*9,y+6]],{fill:'#e76f51',c:'#e76f51',w:1});
+ F.circle([X(a),0],5,{fill:'var(--navy)'});F.circle([X(res),0],5,{fill:'#e76f51',c:'#e76f51'});
+ F.text([(X(a)+X(res))/2,y-14],(res>a?'+':'−')+Math.abs(res-a),{size:13,c:'#e76f51',bold:1});
+ g.sfig=F.svg(T(`Mula di ${f(a)}, gerak ${Math.abs(res-a)} langkah ke ${res>a?'kanan':'kiri'}.`,`Start at ${f(a)}, move ${Math.abs(res-a)} steps to the ${res>a?'right':'left'}.`));
+ return g;
+};
+
+/* ---- Bab 4: bar model in the worked solution for ratio sharing ---- */
+const _g4=G[4];
+G[4]=function(){
+ const g=_g4();const m=/nisbah (\d+) : (\d+)/.exec(g.q.ms),tot=/RM(\d+)/.exec(g.q.ms);
+ if(!m||!tot)return g;
+ const a=+m[1],b=+m[2],T0=+tot[1],k=T0/(a+b),names=/antara (.+?) dan (.+?) dalam/.exec(g.q.ms);if(!names)return g;
+ const bw=Math.min(40,230/Math.max(a,b)),F=new Fig();
+ [[names[1],a,0],[names[2],b,46]].forEach(([nm,n,y])=>{F.text([-8,y+15],nm,{anchor:'end',size:13,bold:1});
+  for(let i=0;i<n;i++)F.rect(i*bw,y,bw,30,{fill:y?'rgba(29,53,87,.12)':'rgba(244,162,97,.35)',w:1.8});
+  F.text([n*bw+8,y+15],'RM'+k*n,{anchor:'start',size:13})});
+ F.text([bw/2,-12],'RM'+k,{size:11,c:'var(--muted)'});
+ g.sfig=F.svg(T(`${a+b} kotak sama besar = RM${T0}, setiap kotak = RM${k}`,`${a+b} equal boxes = RM${T0}, each box = RM${k}`));
+ return g;
+};
 
 
 /* ---------- UI text ---------- */
@@ -474,12 +658,12 @@ function startDaily(){
 
 function quizView(){const q=quiz.qs[quiz.i],c=CH.find(x=>x.id===q.cid);
  let h=`<div class="top"><button class="x" onclick="go('home')">✕</button><div class="prog"><i style="width:${(quiz.i+(quiz.picked!==null?1:0))*10}%"></i></div><b>${quiz.score}</b></div>
- <div class="qcard"><div class="lbl">${quiz.id==='daily'?'⚡ '+L(S.daily)+' • ':''}${L(S.q)} ${quiz.i+1}/10 • ${c[lang]}</div><div class="q">${L(q.q)}${q.m?`<span class="m">${q.m}</span>`:''}</div></div><div class="opts">`;
+ <div class="qcard"><div class="lbl">${quiz.id==='daily'?'⚡ '+L(S.daily)+' • ':''}${L(S.q)} ${quiz.i+1}/10 • ${c[lang]}</div><div class="q">${L(q.q)}${q.m?`<span class="m">${q.m}</span>`:''}</div>${q.fig||''}</div><div class="opts">`;
  q.opts.forEach((o,k)=>{let cls='';if(quiz.picked!==null){if(o===q.ans)cls='ok';else if(k===quiz.picked)cls='no'}
   h+=`<button class="opt ${cls}" ${quiz.picked!==null?'disabled':''} onclick="pick(${k})">${o}</button>`});
  h+='</div>';
  if(quiz.picked!==null){const ok=q.opts[quiz.picked]===q.ans;
-  h+=`<div class="fb ${ok?'ok':'no'}"><b class="h">${ok?L(S.right):L(S.wrong)+' — '+L(S.ans)+': '+q.ans}</b><div class="sol">${L(q.sol)}</div></div>
+  h+=`<div class="fb ${ok?'ok':'no'}"><b class="h">${ok?L(S.right):L(S.wrong)+' — '+L(S.ans)+': '+q.ans}</b><div class="sol">${L(q.sol)}</div>${q.sfig||''}</div>
   <div class="nav" style="margin-top:14px"><button class="btn acc" onclick="nextQ()">${quiz.i<9?L(S.next)+' →':L(S.finish)}</button></div>`}
  return h}
 function pick(k){if(quiz.picked!==null)return;quiz.picked=k;const q=quiz.qs[quiz.i],ok=q.opts[k]===q.ans;if(ok)quiz.score++;record(q.cid,ok);render()}
