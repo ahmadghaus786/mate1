@@ -106,6 +106,10 @@ let localData=store.get('mt1_data',blank());
 let data=localData;           // active progress (guest = local, signed in = cloud)
 let user=null, cloud=null;    // firebase user + profile doc
 let fbReady=false, authChecked=false;
+const PAY_URL='https://script.google.com/macros/s/AKfycbzgvPFJqx0aCLoUBK32c-EuBb2TUcAjJ6BWCSgjEMau6Nv_ErM_GvBISVJc_XAtJp6-MA/exec';   // Google Apps Script web app (/exec)
+const ret=new URLSearchParams(location.search);
+let payReturn=ret.get('status_id');          // ToyyibPay sends ?status_id=1|2|3&billcode=...
+if(payReturn){try{history.replaceState(null,'',location.pathname)}catch(e){}}
 
 /* ---------- helpers ---------- */
 const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
@@ -277,6 +281,12 @@ const S={
  proTitle:T('Pas Tingkatan 1','Form 1 Pass'),proPrice:T('RM49 / setahun','RM49 / year'),
  proB:[T('Semua 13 bab KSSM Tingkatan 1','All 13 KSSM Form 1 chapters'),T('Latihan tanpa had dengan jalan kira','Unlimited practice with worked solutions'),T('Laporan kemajuan untuk ibu bapa','Progress report for parents'),T('Kemajuan disimpan di semua peranti','Progress saved across devices')],
  payFPX:T('Bayar dengan FPX','Pay with FPX'),soonPay:T('Pembayaran akan dibuka tidak lama lagi.','Payments will open soon.'),
+ phone:T('No. telefon ibu bapa (untuk resit)','Parent’s phone number (for the receipt)'),badPhone:T('Sila masukkan no. telefon yang sah, cth. 0123456789.','Please enter a valid phone number, e.g. 0123456789.'),
+ toPay:T('Membuka halaman pembayaran…','Opening the payment page…'),payErr:T('Pembayaran tidak dapat dimulakan. Sila cuba lagi.','Could not start the payment. Please try again.'),
+ paidWait:T('⏳ Pembayaran diterima — mengaktifkan PRO…','⏳ Payment received — activating PRO…'),paidOk:T('🎉 Terima kasih! Akaun anda kini PRO.','🎉 Thank you! Your account is now PRO.'),
+ paidSlow:T('Pembayaran diterima tetapi PRO belum aktif. Tarik untuk muat semula sebentar lagi, atau hubungi kami.','Payment received but PRO is not active yet. Refresh in a moment, or contact us.'),
+ paidFail:T('Pembayaran tidak berjaya atau dibatalkan. Tiada caj dikenakan.','Payment was not successful or was cancelled. You were not charged.'),
+ secure:T('Pembayaran selamat melalui toyyibPay (FPX). Akses PRO selama 365 hari, tiada pembaharuan automatik.','Secure payment via toyyibPay (FPX). PRO access for 365 days, no automatic renewal.'),
  needLogin:T('Sila log masuk dahulu.','Please sign in first.'),offline:T('Log masuk hanya tersedia pada versi penuh aplikasi.','Sign-in is only available on the full version of the app.'),
  locked:T('Bab PRO','PRO chapter'),
  foot:T('Berdasarkan DSKP KSSM Matematik Tingkatan 1','Based on the KSSM Form 1 Mathematics syllabus')
@@ -311,18 +321,20 @@ function mergeProgress(c,l){ // keep whichever has more practice per chapter
 
 /* ---------- firebase hooks (called from module) ---------- */
 window.onFbReady=()=>{fbReady=true;render()};
-window.onUser=(u,profile)=>{
+window.onUser=(u,profile,isRefresh)=>{
   authChecked=true;
+  if(isRefresh){cloud=profile||{};return render()}
   if(u){user=u;cloud=profile||{};const before=JSON.stringify(cloud.progress||{});
     data=mergeProgress(cloud.progress||blank(),localData);
     if(JSON.stringify(data)!==before)window.fb.save({progress:data,lang}).catch(()=>{});
     if(view==='login')view='home';
+    if(payReturn)setTimeout(confirmPayment,0);
   }else{user=null;cloud=null;data=localData}
   render()};
 
 /* ---------- views ---------- */
 const $=document.getElementById('app');
-let quiz=null,view='home',flash='',busy=false;
+let quiz=null,view='home',flash='',busy=false,notice='';
 
 function header(){return `<header><div class="logo">Mate<span>T1</span></div><div class="hr">
 <div class="lang"><button class="${lang==='ms'?'on':''}" onclick="setLang('ms')">BM</button><button class="${lang==='en'?'on':''}" onclick="setLang('en')">EN</button></div>
@@ -333,6 +345,7 @@ function go(v){view=v;flash='';render()}
 function home(){
  const kid=cloud&&cloud.childName?`<div class="hi">Hai, ${esc(cloud.childName)}! 👋</div>`:'';
  let h=header()+kid+`<div class="hero"><div class="s"><b>🔥 ${data.streak}</b><small>${L(S.streak)}</small></div><div class="s"><b>${data.xp}</b><small>${L(S.xp)}</small></div><div class="s"><b>${overall()}%</b><small>${L(S.mastery)}</small></div></div>`;
+ if(notice)h+=`<div class="msg" style="margin-bottom:10px">${notice}</div>`;
  if(!user)h+=`<button class="banner" onclick="go('login')">☁️ ${L(S.loginBanner)}</button>`;
  h+=`<div class="nav"><button class="btn ghost" onclick="go('progress')">📊 ${L(S.progress)}</button>${isPro()?'':`<button class="btn acc" onclick="go('pro')">⭐ PRO</button>`}</div><h2>${L(S.chapters)}</h2>`;
  for(const c of CH){const open=canPlay(c),m=mastery(c.id);
@@ -372,10 +385,31 @@ function accountView(){
 function saveKid(){const v=document.getElementById('kid').value.trim().slice(0,30);cloud.childName=v;run(async()=>{await window.fb.save({childName:v});flash=L(S.saved)})}
 
 function proView(){
- return `<div class="top"><button class="x" onclick="go('home')">←</button><b style="font-size:18px">PRO</b></div>
+ let h=`<div class="top"><button class="x" onclick="go('home')">←</button><b style="font-size:18px">PRO</b></div>
  <div class="procard"><div style="font-size:40px">⭐</div><h3>${L(S.proTitle)}</h3><div class="price">${L(S.proPrice)}</div>
- <ul>${S.proB.map(b=>`<li>✓ ${L(b)}</li>`).join('')}</ul></div>
- ${user?`<button class="btn acc wide" disabled>${L(S.payFPX)}</button><p class="note">${L(S.soonPay)}</p>`:`<button class="btn wide" onclick="go('login')">${L(S.login)}</button><p class="note">${L(S.needLogin)}</p>`}`}
+ <ul>${S.proB.map(b=>`<li>✓ ${L(b)}</li>`).join('')}</ul></div>`;
+ if(!user)return h+`<button class="btn wide" onclick="go('login')">${L(S.login)}</button><p class="note">${L(S.needLogin)}</p>`;
+ if(!PAY_URL.startsWith('https://'))return h+`<button class="btn acc wide" disabled>${L(S.payFPX)}</button><p class="note">${L(S.soonPay)}</p>`;
+ return h+`<div class="panel" style="margin-top:12px"><label class="muted">${L(S.phone)}</label>
+ <input id="ph" type="tel" inputmode="tel" autocomplete="tel" placeholder="0123456789" value="${esc(store.get('mt1_phone',''))}">
+ <button class="btn acc" ${busy?'disabled':''} onclick="startPay()">🏦 ${L(S.payFPX)} — RM49</button>${flash?`<div class="msg">${flash}</div>`:''}</div>
+ <p class="note">🔒 ${L(S.secure)}</p>`}
+function startPay(){
+ const ph=document.getElementById('ph').value.replace(/[^0-9]/g,'');
+ if(!/^(0?1\d{8,9}|601\d{8,9})$/.test(ph)){flash=L(S.badPhone);return render()}
+ store.set('mt1_phone',ph);
+ run(async()=>{
+  let d=null;
+  try{const q=new URLSearchParams({action:'pay',uid:user.uid,email:user.email||'',name:user.name||'',phone:ph});
+   const r=await fetch(PAY_URL+'?'+q.toString(),{redirect:'follow'});d=await r.json()}catch(e){d=null}
+  if(!d||!d.ok||!d.url){flash=d&&d.error==='bad_phone'?L(S.badPhone):L(S.payErr);return}
+  flash=L(S.toPay);render();location.href=d.url;
+ })}
+async function confirmPayment(){
+ if(payReturn!=='1'){notice=L(S.paidFail);payReturn=null;return render()}
+ payReturn=null;notice=L(S.paidWait);view='home';render();
+ for(let i=0;i<8&&!isPro();i++){await new Promise(r=>setTimeout(r,3000));try{await window.fb.refresh()}catch(e){}}
+ notice=isPro()?L(S.paidOk):L(S.paidSlow);render()}
 
 function uniqOpts(ans,wr){const A=String(typeof ans==='number'?f(ans):ans);const set=new Set([A]);
  for(const w of wr){const s=typeof w==='number'?f(w):String(w);if(set.size<4&&s!==A&&!s.includes('NaN'))set.add(s)}
@@ -446,6 +480,8 @@ window.fb={
   emailUp:(e,p)=>createUserWithEmailAndPassword(auth,e,p),
   reset:e=>sendPasswordResetEmail(auth,e),
   out:()=>signOut(auth),
+  async refresh(){if(!ref)return;const s=await getDoc(ref);const d=s.data()||{};const pu=d.premiumUntil;
+    window.onUser({uid:auth.currentUser.uid,email:auth.currentUser.email,name:auth.currentUser.displayName||''},{...d,proUntil:pu&&pu.toMillis?pu.toMillis():0},true)},
   save(fields){if(!ref)return Promise.resolve();return setDoc(ref,{...fields,updatedAt:serverTimestamp()},{merge:true})}
 };
 window.onFbReady&&window.onFbReady();
@@ -459,7 +495,7 @@ onAuthStateChanged(auth,async u=>{
     else{d={email:u.email||'',name:u.displayName||'',childName:'',createdAt:serverTimestamp()};await setDoc(ref,d)}
   }catch(e){console.error(e)}
   const pu=d.premiumUntil;
-  window.onUser({uid:u.uid,email:u.email},{...d,proUntil:pu&&pu.toMillis?pu.toMillis():0});
+  window.onUser({uid:u.uid,email:u.email,name:u.displayName||''},{...d,proUntil:pu&&pu.toMillis?pu.toMillis():0});
 });
 
 </script>
