@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1d3557">
+<meta name="description" content="Latihan Matematik Tingkatan 1 KSSM dengan jawapan dan jalan kira. Form 1 Maths practice in BM and English.">
+<title>MateT1 — Matematik Tingkatan 1</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1d2433; --muted:#6b7385; --bg:#f6f4ef; --card:#ffffff; --line:#e7e3da;
+  --navy:#1d3557; --accent:#f4a261; --good:#2a9d8f; --bad:#e76f51; --soft:#fdf1e6;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+.app{max-width:520px;margin:0 auto;min-height:100vh;padding:0 16px 40px}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 0 10px}
+.logo{font-weight:800;font-size:22px;letter-spacing:-.5px;color:var(--navy)}
+.logo span{color:var(--accent)}
+.lang{display:flex;border:1.5px solid var(--navy);border-radius:999px;overflow:hidden}
+.lang button{border:0;background:none;padding:6px 12px;font:inherit;font-weight:700;font-size:13px;color:var(--navy);cursor:pointer}
+.lang button.on{background:var(--navy);color:#fff}
+.hero{background:var(--navy);color:#fff;border-radius:20px;padding:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 18px}
+.hero .s b{display:block;font-size:24px;font-weight:800}
+.hero .s small{opacity:.75;font-size:12px}
+h2{font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:22px 4px 10px}
+.ch{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;cursor:pointer;width:100%;text-align:left;font:inherit;color:inherit}
+.ch:active{transform:scale(.99)}
+.ch .n{flex:0 0 40px;height:40px;border-radius:12px;background:var(--soft);color:var(--navy);display:grid;place-items:center;font-weight:800}
+.ch .t{flex:1;min-width:0}
+.ch .t b{display:block;font-size:15px}
+.ch .t small{color:var(--muted);font-size:12px}
+.bar{height:6px;background:#eee8dc;border-radius:9px;margin-top:7px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--good);border-radius:9px}
+.ch.lock{opacity:.5;cursor:default}
+.tag{font-size:10px;font-weight:800;padding:3px 7px;border-radius:6px;background:#eee8dc;color:var(--muted)}
+.tag.pro{background:var(--accent);color:#fff}
+.nav{display:flex;gap:8px;margin-top:4px}
+.nav button{flex:1}
+.btn{border:0;border-radius:14px;padding:14px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;background:var(--navy);color:#fff}
+.btn.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--navy)}
+.btn.acc{background:var(--accent)}
+.top{display:flex;align-items:center;gap:10px;padding:16px 0}
+.x{border:0;background:none;font-size:22px;cursor:pointer;color:var(--muted);padding:4px 8px}
+.prog{flex:1;height:10px;background:#eee8dc;border-radius:9px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);transition:width .3s}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:22px 18px;margin:8px 0 14px}
+.qcard .lbl{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.qcard .q{font-size:20px;font-weight:700;line-height:1.45;margin-top:8px}
+.qcard .q .m{font-size:26px;display:block;margin-top:6px;color:var(--navy)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{background:#fff;border:2px solid var(--line);border-radius:14px;padding:16px 8px;font:inherit;font-size:19px;font-weight:700;cursor:pointer;color:var(--ink)}
+.opt.ok{border-color:var(--good);background:#e6f5f3;color:var(--good)}
+.opt.no{border-color:var(--bad);background:#fdece7;color:var(--bad)}
+.opt:disabled{cursor:default}
+.fb{margin-top:14px;border-radius:16px;padding:14px 16px;line-height:1.55;font-size:15px}
+.fb.ok{background:#e6f5f3}
+.fb.no{background:#fdece7}
+.fb b.h{display:block;font-size:16px;margin-bottom:4px}
+.fb .sol{white-space:pre-line}
+.res{text-align:center;padding:30px 0 10px}
+.res .big{font-size:64px;font-weight:800;color:var(--navy)}
+.res p{color:var(--muted)}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.weak{background:var(--soft);border-radius:16px;padding:14px;margin:10px 0;font-size:14px;line-height:1.5}
+.foot{color:var(--muted);font-size:12px;text-align:center;margin-top:28px;line-height:1.5}
+.hr{display:flex;align-items:center;gap:8px}
+.acct{border:0;background:var(--accent);color:#fff;border-radius:999px;padding:7px 12px;font:inherit;font-weight:700;font-size:13px;cursor:pointer;min-width:38px}
+.hi{font-weight:700;font-size:18px;margin:2px 4px 8px}
+.banner{width:100%;text-align:left;border:1.5px dashed var(--accent);background:var(--soft);color:var(--ink);border-radius:14px;padding:12px 14px;font:inherit;font-size:14px;cursor:pointer;margin-bottom:10px}
+.ch.locked{opacity:.65}
+.ch.locked .n{background:#eee8dc}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.panel input{border:1.5px solid var(--line);border-radius:12px;padding:13px;font:inherit;font-size:16px;background:#fff}
+.panel input:focus{outline:none;border-color:var(--navy)}
+.gbtn{background:#fff;color:var(--ink);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;gap:10px}
+.or{text-align:center;color:var(--muted);font-size:13px;margin:4px 0}
+.link{border:0;background:none;color:var(--navy);font:inherit;font-weight:600;cursor:pointer;padding:4px}
+.msg{background:var(--soft);border-radius:10px;padding:10px;font-size:14px}
+.note{color:var(--muted);font-size:13px;line-height:1.5;text-align:center;margin:12px 6px}
+.muted{color:var(--muted);font-size:13px}
+.wide{width:100%;margin-top:12px}
+.btn:disabled{opacity:.55;cursor:default}
+.procard{background:var(--navy);color:#fff;border-radius:20px;padding:24px 20px;text-align:center}
+.procard h3{margin:6px 0 2px;font-size:22px}
+.procard .price{font-size:28px;font-weight:800;color:var(--accent);margin-bottom:10px}
+.procard ul{list-style:none;padding:0;margin:0;text-align:left;line-height:2;font-size:15px}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+/* ---------- storage (safe) ---------- */
+const mem={};
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return k in mem?mem[k]:d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){mem[k]=v}}
+};
+let lang=store.get('mt1_lang','ms');
+const blank=()=>({ch:{},xp:0,streak:0,last:null});
+let localData=store.get('mt1_data',blank());
+let data=localData;           // active progress (guest = local, signed in = cloud)
+let user=null, cloud=null;    // firebase user + profile doc
+let fbReady=false, authChecked=false;
+
+/* ---------- helpers ---------- */
+const R=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const P=a=>a[Math.floor(Math.random()*a.length)];
+const NZ=(a,b)=>{let x=0;while(x===0)x=R(a,b);return x};
+const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+const f=n=>(typeof n==='number'&&n<0)?'−'+Math.abs(n):String(n);
+const fp=n=>n<0?'('+f(n)+')':f(n);
+const T=(ms,en)=>({ms,en});
+const L=o=>typeof o==='string'?o:o[lang];
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ---------- question generators per KSSM chapter ---------- */
+const G={
+ 1(){ // Nombor Nisbah — integer operations
+  const op=P(['+','−','×','÷']);let a=NZ(-20,20),b=NZ(-12,12),ans,wr,sol;
+  if(op==='+'){ans=a+b;wr=[a-b,-(a+b),Math.abs(a)+Math.abs(b)];
+    sol=T(`${fp(a)} + ${fp(b)} = ${f(ans)}\nTambah nombor negatif sama seperti menolak.`,`${fp(a)} + ${fp(b)} = ${f(ans)}\nAdding a negative number is the same as subtracting.`);}
+  else if(op==='−'){ans=a-b;wr=[a+b,b-a,-(Math.abs(a)+Math.abs(b))];
+    sol=T(`${fp(a)} − ${fp(b)} = ${fp(a)} + ${fp(-b)} = ${f(ans)}\nTolak nombor = tambah songsangnya.`,`${fp(a)} − ${fp(b)} = ${fp(a)} + ${fp(-b)} = ${f(ans)}\nSubtracting a number = adding its opposite.`);}
+  else if(op==='×'){a=NZ(-12,12);b=NZ(-9,9);ans=a*b;wr=[-ans,a+b,a*b+(ans>0?a:-a)];
+    sol=T(`${fp(a)} × ${fp(b)} = ${f(ans)}\nTanda sama → positif. Tanda berbeza → negatif.`,`${fp(a)} × ${fp(b)} = ${f(ans)}\nSame signs → positive. Different signs → negative.`);}
+  else{b=NZ(-9,9);ans=NZ(-12,12);a=ans*b;wr=[-ans,ans+1,b];
+    sol=T(`${fp(a)} ÷ ${fp(b)} = ${f(ans)}\nTanda sama → positif. Tanda berbeza → negatif.`,`${fp(a)} ÷ ${fp(b)} = ${f(ans)}\nSame signs → positive. Different signs → negative.`);}
+  return{q:T('Hitung:','Calculate:'),m:`${fp(a)} ${op} ${fp(b)}`,a:ans,w:wr,sol};
+ },
+ 2(){ // Faktor dan Gandaan — FSTB / GSTK
+  const g=R(2,8);let m,n;do{m=R(2,9);n=R(2,9)}while(m===n||gcd(m,n)!==1);
+  const a=g*m,b=g*n,hcf=g,lcm=g*m*n;
+  if(Math.random()<.5)return{q:T(`Cari Faktor Sepunya Terbesar (FSTB) bagi ${a} dan ${b}.`,`Find the Highest Common Factor (HCF) of ${a} and ${b}.`),a:hcf,w:[lcm,hcf*m,Math.min(m,n)],
+    sol:T(`${a} = ${g} × ${m}\n${b} = ${g} × ${n}\n${m} dan ${n} tiada faktor sepunya lain, jadi FSTB = ${hcf}.`,`${a} = ${g} × ${m}\n${b} = ${g} × ${n}\n${m} and ${n} share no other factor, so HCF = ${hcf}.`)};
+  return{q:T(`Cari Gandaan Sepunya Terkecil (GSTK) bagi ${a} dan ${b}.`,`Find the Lowest Common Multiple (LCM) of ${a} and ${b}.`),a:lcm,w:[a*b,hcf,lcm*2],
+    sol:T(`${a} = ${g} × ${m}\n${b} = ${g} × ${n}\nGSTK = ${g} × ${m} × ${n} = ${lcm}.`,`${a} = ${g} × ${m}\n${b} = ${g} × ${n}\nLCM = ${g} × ${m} × ${n} = ${lcm}.`)};
+ },
+ 3(){ // Kuasa dua, punca kuasa dua, kuasa tiga, punca kuasa tiga
+  const t=R(0,3);
+  if(t===0){const n=R(4,20);return{q:T('Hitung:','Calculate:'),m:`${n}²`,a:n*n,w:[n*2,n*n+n,(n-1)*(n-1)],sol:T(`${n}² = ${n} × ${n} = ${n*n}`,`${n}² = ${n} × ${n} = ${n*n}`)}}
+  if(t===1){const n=R(4,20);return{q:T('Hitung:','Calculate:'),m:`√${n*n}`,a:n,w:[n*n/2|0,n+1,n-1],sol:T(`${n} × ${n} = ${n*n}, maka √${n*n} = ${n}`,`${n} × ${n} = ${n*n}, so √${n*n} = ${n}`)}}
+  if(t===2){const n=NZ(-9,10);return{q:T('Hitung:','Calculate:'),m:`${fp(n)}³`,a:n**3,w:[n*3,-(n**3),n*n],sol:T(`${fp(n)}³ = ${fp(n)} × ${fp(n)} × ${fp(n)} = ${f(n**3)}${n<0?'\nKuasa tiga nombor negatif sentiasa negatif.':''}`,`${fp(n)}³ = ${fp(n)} × ${fp(n)} × ${fp(n)} = ${f(n**3)}${n<0?'\nThe cube of a negative number is always negative.':''}`)}}
+  const n=NZ(-10,10);return{q:T('Hitung:','Calculate:'),m:`∛${fp(n**3)}`,a:n,w:[-n,n*3,n+(n>0?1:-1)],sol:T(`${fp(n)} × ${fp(n)} × ${fp(n)} = ${f(n**3)}, maka ∛${fp(n**3)} = ${f(n)}`,`${fp(n)} × ${fp(n)} × ${fp(n)} = ${f(n**3)}, so ∛${fp(n**3)} = ${f(n)}`)};
+ },
+ 4(){ // Nisbah, Kadar dan Kadaran
+  if(Math.random()<.55){let a,b;do{a=R(1,7);b=R(1,7)}while(a===b||gcd(a,b)!==1);const k=R(2,15)*5,tot=k*(a+b);const nm=P(['Aina','Hafiz','Mei Ling','Ravi']),nm2=P(['Danish','Siti','Kumar','Wei Jie'].filter(x=>x!==nm));
+   return{q:T(`RM${tot} dikongsi antara ${nm} dan ${nm2} dalam nisbah ${a} : ${b}. Berapakah bahagian ${nm}?`,`RM${tot} is shared between ${nm} and ${nm2} in the ratio ${a} : ${b}. How much does ${nm} get?`),a:'RM'+k*a,w:['RM'+k*b,'RM'+k,'RM'+(tot/2)],
+    sol:T(`Jumlah bahagian = ${a} + ${b} = ${a+b}\n1 bahagian = RM${tot} ÷ ${a+b} = RM${k}\n${nm} = ${a} × RM${k} = RM${k*a}`,`Total parts = ${a} + ${b} = ${a+b}\n1 part = RM${tot} ÷ ${a+b} = RM${k}\n${nm} = ${a} × RM${k} = RM${k*a}`)}}
+  const s=R(4,12)*10,t=R(2,5),d=s*t;
+  return{q:T(`Sebuah kereta bergerak ${d} km dalam ${t} jam. Berapakah lajunya?`,`A car travels ${d} km in ${t} hours. What is its speed?`),a:`${s} ${lang==='ms'?'km/j':'km/h'}`,w:[d*t,s+10,s-10].map(v=>`${v} ${lang==='ms'?'km/j':'km/h'}`),
+   sol:T(`Laju = jarak ÷ masa\n= ${d} km ÷ ${t} j = ${s} km/j`,`Speed = distance ÷ time\n= ${d} km ÷ ${t} h = ${s} km/h`)};
+ },
+ 5(){ // Ungkapan Algebra
+  if(Math.random()<.5){const a=R(2,9),b=R(2,9),c=R(1,9),r=a+b-c;const v=P(['x','y','p','k']);const fmtc=n=>n===1?v:n===-1?'−'+v:n===0?'0':f(n)+v;
+   return{q:T('Ringkaskan:','Simplify:'),m:`${a}${v} + ${b}${v} − ${c}${v}`,a:fmtc(r),w:[fmtc(a+b+c),fmtc(r+1),`${fmtc(a+b)} − ${c}`].map(String),
+    sol:T(`Gabungkan sebutan serupa:\n(${a} + ${b} − ${c})${v} = ${fmtc(r)}`,`Combine like terms:\n(${a} + ${b} − ${c})${v} = ${fmtc(r)}`)}}
+  const a=R(2,7),b=NZ(-9,9),x=NZ(-5,5),r=a*x+b;
+  return{q:T(`Cari nilai ungkapan apabila x = ${f(x)}:`,`Find the value of the expression when x = ${f(x)}:`),m:`${a}x ${b<0?'−':'+'} ${Math.abs(b)}`,a:r,w:[-a*x+b,a+x+b,a*x-b],
+   sol:T(`${a}(${f(x)}) ${b<0?'−':'+'} ${Math.abs(b)} = ${f(a*x)} ${b<0?'−':'+'} ${Math.abs(b)} = ${f(r)}`,`${a}(${f(x)}) ${b<0?'−':'+'} ${Math.abs(b)} = ${f(a*x)} ${b<0?'−':'+'} ${Math.abs(b)} = ${f(r)}`)};
+ },
+ 6(){ // Persamaan Linear
+  const a=R(2,9),x=NZ(-10,10),b=NZ(-15,15),c=a*x+b;const bs=b<0?'−':'+';
+  return{q:T('Selesaikan persamaan:','Solve the equation:'),m:`${a}x ${bs} ${Math.abs(b)} = ${f(c)}`,a:'x = '+f(x),w:['x = '+f(-x),'x = '+f(x+1),'x = '+f(x-2)],
+   sol:T(`${a}x = ${f(c)} ${b<0?'+':'−'} ${Math.abs(b)}\n${a}x = ${f(c-b)}\nx = ${f(c-b)} ÷ ${a} = ${f(x)}`,`${a}x = ${f(c)} ${b<0?'+':'−'} ${Math.abs(b)}\n${a}x = ${f(c-b)}\nx = ${f(c-b)} ÷ ${a} = ${f(x)}`)};
+ },
+ 7(){ // Ketaksamaan Linear
+  if(Math.random()<.7){const ops=['>','<','≥','≤'],flip={'>':'<','<':'>','≥':'≤','≤':'≥'};const op=P(ops);
+   let a=NZ(-6,6);while(Math.abs(a)===1)a=NZ(-6,6);const k=NZ(-9,9),b=NZ(-12,12),c=a*k+b;const bs=b<0?'−':'+';
+   const rop=a<0?flip[op]:op;const ax=a===-1?'−x':f(a)+'x';
+   const note=a<0?T(`\nBahagi dengan nombor negatif (${f(a)}) → terbalikkan simbol ketaksamaan.`,`\nDividing by a negative number (${f(a)}) → reverse the inequality sign.`):T('','');
+   return{q:T('Selesaikan ketaksamaan:','Solve the inequality:'),m:`${ax} ${bs} ${Math.abs(b)} ${op} ${f(c)}`,a:`x ${rop} ${f(k)}`,w:[`x ${flip[rop]} ${f(k)}`,`x ${rop} ${f(-k)}`,`x ${rop} ${f(k+1)}`],
+    sol:T(`${ax} ${op} ${f(c)} ${b<0?'+':'−'} ${Math.abs(b)}\n${ax} ${op} ${f(c-b)}\nx ${rop} ${f(c-b)} ÷ ${fp(a)}\nx ${rop} ${f(k)}`+note.ms,`${ax} ${op} ${f(c)} ${b<0?'+':'−'} ${Math.abs(b)}\n${ax} ${op} ${f(c-b)}\nx ${rop} ${f(c-b)} ÷ ${fp(a)}\nx ${rop} ${f(k)}`+note.en)};}
+  const a=R(2,6);let c;do{c=R(7,45)}while(c%a===0);const ans=Math.floor(c/a);
+  return{q:T(`Cari integer terbesar x yang memuaskan:`,`Find the largest integer x that satisfies:`),m:`${a}x < ${c}`,a:ans,w:[ans+1,Math.ceil(c/a)+1,ans-1],
+   sol:T(`x < ${c} ÷ ${a}\nx < ${+(c/a).toFixed(2)}${(c*100)%a?"…":""}\nInteger terbesar = ${ans}`,`x < ${c} ÷ ${a}\nx < ${+(c/a).toFixed(2)}${(c*100)%a?"…":""}\nLargest integer = ${ans}`)};
+ },
+ 8(){ // Garis dan Sudut
+  const t=R(0,4);
+  if(t===0){const a=R(12,78);return{q:T(`Cari pelengkap bagi sudut ${a}°.`,`Find the complement of ${a}°.`),a:`${90-a}°`,w:[`${180-a}°`,`${360-a}°`,`${Math.abs(90-a-10)||1}°`],sol:T(`Sudut pelengkap berjumlah 90°.\n90° − ${a}° = ${90-a}°`,`Complementary angles add up to 90°.\n90° − ${a}° = ${90-a}°`)}}
+  if(t===1){const a=R(15,165);return{q:T(`Cari penggenap bagi sudut ${a}°.`,`Find the supplement of ${a}°.`),a:`${180-a}°`,w:[`${Math.abs(90-a)||5}°`,`${360-a}°`,`${180-a+10}°`],sol:T(`Sudut penggenap berjumlah 180°.\n180° − ${a}° = ${180-a}°`,`Supplementary angles add up to 180°.\n180° − ${a}° = ${180-a}°`)}}
+  if(t===2){const a=R(40,140),b=R(40,140);return{q:T(`Tiga sudut bertemu pada satu titik. Dua daripadanya ialah ${a}° dan ${b}°. Cari sudut ketiga.`,`Three angles meet at a point. Two of them are ${a}° and ${b}°. Find the third angle.`),a:`${360-a-b}°`,w:[`${Math.abs(180-a-b)||10}°`,`${360-a}°`,`${a+b}°`].filter(x=>x!==`${360-a-b}°`),sol:T(`Sudut pada satu titik berjumlah 360°.\n360° − ${a}° − ${b}° = ${360-a-b}°`,`Angles at a point add up to 360°.\n360° − ${a}° − ${b}° = ${360-a-b}°`)}}
+  if(t===3){const a=R(25,155);return{q:T(`Dua garis lurus bersilang. Satu sudut ialah ${a}°. Berapakah sudut bertentang bucunya?`,`Two straight lines intersect. One angle is ${a}°. What is its vertically opposite angle?`),a:`${a}°`,w:[`${180-a}°`,`${360-a}°`,`${Math.abs(90-a)||45}°`],sol:T(`Sudut bertentang bucu adalah sama.\nJawapan = ${a}°`,`Vertically opposite angles are equal.\nAnswer = ${a}°`)}}
+  const a=R(30,100),b=R(20,150-a);return{q:T(`Tiga sudut terletak pada satu garis lurus. Dua daripadanya ialah ${a}° dan ${b}°. Cari sudut ketiga.`,`Three angles lie on a straight line. Two of them are ${a}° and ${b}°. Find the third angle.`),a:`${180-a-b}°`,w:[`${360-a-b}°`,`${90}°`,`${a+b}°`].filter(x=>x!==`${180-a-b}°`),sol:T(`Sudut pada garis lurus berjumlah 180°.\n180° − ${a}° − ${b}° = ${180-a-b}°`,`Angles on a straight line add up to 180°.\n180° − ${a}° − ${b}° = ${180-a-b}°`)};
+ },
+ 9(){ // Poligon Asas
+  const t=R(0,3);
+  if(t===0){const a=R(30,100),b=R(20,150-a);return{q:T(`Dua sudut pedalaman sebuah segi tiga ialah ${a}° dan ${b}°. Cari sudut ketiga.`,`Two interior angles of a triangle are ${a}° and ${b}°. Find the third angle.`),a:`${180-a-b}°`,w:[`${360-a-b}°`,`${a+b}°`,`${180-a-b+10}°`],sol:T(`Hasil tambah sudut pedalaman segi tiga = 180°.\n180° − ${a}° − ${b}° = ${180-a-b}°`,`Interior angles of a triangle add up to 180°.\n180° − ${a}° − ${b}° = ${180-a-b}°`)}}
+  if(t===1){const ap=R(10,70)*2,base=(180-ap)/2;return{q:T(`Sebuah segi tiga sama kaki mempunyai sudut puncak ${ap}°. Cari setiap sudut tapaknya.`,`An isosceles triangle has an apex angle of ${ap}°. Find each base angle.`),a:`${base}°`,w:[`${180-ap}°`,`${ap}°`,`${base+10}°`].filter(x=>x!==`${base}°`),sol:T(`Dua sudut tapak adalah sama.\n(180° − ${ap}°) ÷ 2 = ${base}°`,`The two base angles are equal.\n(180° − ${ap}°) ÷ 2 = ${base}°`)}}
+  if(t===2){const a=R(60,120),b=R(60,120),c=R(50,110);const d=360-a-b-c;return{q:T(`Tiga sudut pedalaman sebuah sisi empat ialah ${a}°, ${b}° dan ${c}°. Cari sudut keempat.`,`Three interior angles of a quadrilateral are ${a}°, ${b}° and ${c}°. Find the fourth angle.`),a:`${d}°`,w:[`${Math.abs(180-a-b)+c}°`,`${360-a-b}°`,`${d+20}°`].filter(x=>x!==`${d}°`),sol:T(`Hasil tambah sudut pedalaman sisi empat = 360°.\n360° − ${a}° − ${b}° − ${c}° = ${d}°`,`Interior angles of a quadrilateral add up to 360°.\n360° − ${a}° − ${b}° − ${c}° = ${d}°`)}}
+  const a=R(50,130);return{q:T(`Satu sudut sebuah segi empat selari ialah ${a}°. Cari sudut bersebelahan dengannya.`,`One angle of a parallelogram is ${a}°. Find the angle next to it.`),a:`${180-a}°`,w:[`${a}°`,`${360-a}°`,`${Math.abs(90-a)||30}°`].filter(x=>x!==`${180-a}°`),sol:T(`Sudut bersebelahan dalam segi empat selari berjumlah 180°.\n180° − ${a}° = ${180-a}°`,`Adjacent angles in a parallelogram add up to 180°.\n180° − ${a}° = ${180-a}°`)};
+ },
+ 11(){ // Pengenalan Set
+  const t=R(0,2);
+  if(t===0){const kinds=[
+    ()=>{const n=P([12,18,20,24,30,36]);const el=[];for(let i=1;i<=n;i++)if(n%i===0)el.push(i);return[T(`faktor bagi ${n}`,`factors of ${n}`),el]},
+    ()=>{const n=P([10,15,20,25,30]);const el=[];for(let i=2;i<n;i++){let p=1;for(let j=2;j*j<=i;j++)if(i%j===0)p=0;if(p)el.push(i)}return[T(`nombor perdana kurang daripada ${n}`,`prime numbers less than ${n}`),el]},
+    ()=>{const m=R(3,7),n=m*R(5,9);const el=[];for(let i=m;i<=n;i+=m)el.push(i);return[T(`gandaan ${m} dari 1 hingga ${n}`,`multiples of ${m} from 1 to ${n}`),el]}];
+   const [d,el]=P(kinds)();const n=el.length;
+   return{q:T(`A = {${d.ms}}. Cari n(A).`,`A = {${d.en}}. Find n(A).`),a:n,w:[n+1,n-1,n+2],sol:T(`A = {${el.join(', ')}}\nn(A) = ${n}`,`A = {${el.join(', ')}}\nn(A) = ${n}`)}}
+  if(t===1){const u=R(15,40),a=R(4,u-3);return{q:T(`Diberi n(ξ) = ${u} dan n(A) = ${a}. Cari n(A').`,`Given n(ξ) = ${u} and n(A) = ${a}. Find n(A').`),a:u-a,w:[u+a,a,u],sol:T(`A' ialah unsur dalam ξ yang bukan dalam A.\nn(A') = n(ξ) − n(A) = ${u} − ${a} = ${u-a}`,`A' is the elements of ξ not in A.\nn(A') = n(ξ) − n(A) = ${u} − ${a} = ${u-a}`)}}
+  const n=R(2,5);const pool=['a','b','c','d','e','p','q','r'].sort(()=>Math.random()-.5).slice(0,n).sort();
+  return{q:T(`Berapakah bilangan subset bagi set B = {${pool.join(', ')}}?`,`How many subsets does the set B = {${pool.join(', ')}} have?`),a:2**n,w:[2*n,n,2**n-1],
+   sol:T(`Bilangan subset = 2ⁿ, n = bilangan unsur.\n2^${n} = ${2**n}\n(termasuk set kosong ∅ dan B sendiri)`,`Number of subsets = 2ⁿ, n = number of elements.\n2^${n} = ${2**n}\n(including the empty set ∅ and B itself)`)};
+ },
+ 12(){ // Pengendalian Data
+  const t=R(0,2);
+  if(t===0){const vals=[1,2,3,4,5];const data=[];for(let i=0;i<R(12,18);i++)data.push(P(vals));const v=P(vals),fr=data.filter(x=>x===v).length;
+   return{q:T(`Bilangan adik-beradik bagi sekumpulan murid:`,`Number of siblings of a group of pupils:`),m:`<span style="font-size:18px;letter-spacing:1px">${data.join(', ')}</span><br><span style="font-size:16px">${lang==='ms'?'Kekerapan bagi':'Frequency of'} ${v}?</span>`,a:fr,w:[fr+1,Math.max(fr-1,0)===fr?fr+2:fr-1,v],
+    sol:T(`Kira berapa kali ${v} muncul dalam data.\nKekerapan ${v} = ${fr}`,`Count how many times ${v} appears in the data.\nFrequency of ${v} = ${fr}`)}}
+  if(t===1){const tot=P([20,24,30,36,40,45,60,72,90]);let n;do{n=R(1,tot-1)}while((n*360)%tot!==0);const ang=n*360/tot;const it=P([T('bola sepak','football'),T('badminton','badminton'),T('bola jaring','netball'),T('sepak takraw','sepak takraw')]);
+   return{q:T(`${n} daripada ${tot} murid memilih ${it.ms}. Jika data diwakili dalam carta pai, cari sudut sektor ${it.ms}.`,`${n} out of ${tot} pupils chose ${it.en}. If the data is shown in a pie chart, find the angle of the ${it.en} sector.`),a:`${ang}°`,w:[`${n}°`,`${Math.round(n/tot*100)}°`,`${ang+10}°`].filter(x=>x!==`${ang}°`),
+    sol:T(`Sudut sektor = (${n} ÷ ${tot}) × 360°\n= ${ang}°`,`Sector angle = (${n} ÷ ${tot}) × 360°\n= ${ang}°`)}}
+  const days=lang==='ms'?['Isnin','Selasa','Rabu','Khamis','Jumaat']:['Monday','Tuesday','Wednesday','Thursday','Friday'];const fr=days.map(()=>R(5,30));
+  const i=R(0,4);let j;do{j=R(0,4)}while(j===i||fr[j]===fr[i]);const d=Math.abs(fr[i]-fr[j]);
+  return{q:T(`Carta palang menunjukkan bilangan buku dipinjam: ${days.map((x,k)=>x+' '+fr[k]).join(', ')}. Berapakah beza antara ${days[i]} dan ${days[j]}?`,`A bar chart shows books borrowed: ${days.map((x,k)=>x+' '+fr[k]).join(', ')}. What is the difference between ${days[i]} and ${days[j]}?`),a:d,w:[fr[i]+fr[j],d+1,d+2],
+   sol:T(`${days[i]} = ${fr[i]}, ${days[j]} = ${fr[j]}\nBeza = ${Math.max(fr[i],fr[j])} − ${Math.min(fr[i],fr[j])} = ${d}`,`${days[i]} = ${fr[i]}, ${days[j]} = ${fr[j]}\nDifference = ${Math.max(fr[i],fr[j])} − ${Math.min(fr[i],fr[j])} = ${d}`)};
+ },
+ 10(){ // Perimeter dan Luas
+  const t=R(0,2);
+  if(t===0){const l=R(3,20),w=R(2,15);return{q:T(`Sebuah segi empat tepat berukuran ${l} cm × ${w} cm. Cari luasnya.`,`A rectangle measures ${l} cm × ${w} cm. Find its area.`),a:`${l*w} cm²`,w:[`${2*(l+w)} cm²`,`${l+w} cm²`,`${l*w/2} cm²`],sol:T(`Luas = panjang × lebar\n= ${l} × ${w} = ${l*w} cm²`,`Area = length × width\n= ${l} × ${w} = ${l*w} cm²`)}}
+  if(t===1){const l=R(3,20),w=R(2,15);return{q:T(`Sebuah segi empat tepat berukuran ${l} cm × ${w} cm. Cari perimeternya.`,`A rectangle measures ${l} cm × ${w} cm. Find its perimeter.`),a:`${2*(l+w)} cm`,w:[`${l*w} cm`,`${l+w} cm`,`${4*l} cm`],sol:T(`Perimeter = 2 × (panjang + lebar)\n= 2 × (${l} + ${w}) = ${2*(l+w)} cm`,`Perimeter = 2 × (length + width)\n= 2 × (${l} + ${w}) = ${2*(l+w)} cm`)}}
+  const bse=R(2,12)*2,h=R(3,15);return{q:T(`Sebuah segi tiga mempunyai tapak ${bse} cm dan tinggi ${h} cm. Cari luasnya.`,`A triangle has base ${bse} cm and height ${h} cm. Find its area.`),a:`${bse*h/2} cm²`,w:[`${bse*h} cm²`,`${bse+h} cm²`,`${bse*h/2+h} cm²`],sol:T(`Luas = ½ × tapak × tinggi\n= ½ × ${bse} × ${h} = ${bse*h/2} cm²`,`Area = ½ × base × height\n= ½ × ${bse} × ${h} = ${bse*h/2} cm²`)};
+ },
+ 13(){ // Teorem Pythagoras
+  const [p,q,r]=P([[3,4,5],[5,12,13],[8,15,17],[7,24,25],[20,21,29]]);const k=p===3?R(1,4):1;const a=p*k,b=q*k,c=r*k;
+  if(Math.random()<.5)return{q:T(`Sebuah segi tiga bersudut tegak mempunyai sisi ${a} cm dan ${b} cm. Cari panjang hipotenus.`,`A right-angled triangle has sides ${a} cm and ${b} cm. Find the hypotenuse.`),a:`${c} cm`,w:[`${a+b} cm`,`${c+1} cm`,`${b-a+c-1} cm`],
+   sol:T(`c² = ${a}² + ${b}² = ${a*a} + ${b*b} = ${c*c}\nc = √${c*c} = ${c} cm`,`c² = ${a}² + ${b}² = ${a*a} + ${b*b} = ${c*c}\nc = √${c*c} = ${c} cm`)};
+  return{q:T(`Hipotenus sebuah segi tiga bersudut tegak ialah ${c} cm dan satu sisi lain ialah ${a} cm. Cari sisi yang satu lagi.`,`The hypotenuse of a right-angled triangle is ${c} cm and one other side is ${a} cm. Find the remaining side.`),a:`${b} cm`,w:[`${c-a} cm`,`${c+a} cm`,`${b+1} cm`],
+   sol:T(`b² = ${c}² − ${a}² = ${c*c} − ${a*a} = ${b*b}\nb = √${b*b} = ${b} cm`,`b² = ${c}² − ${a}² = ${c*c} − ${a*a} = ${b*b}\nb = √${b*b} = ${b} cm`)};
+ }
+};
+
+const CH=[
+ {id:1,ms:'Nombor Nisbah',en:'Rational Numbers',free:1},
+ {id:2,ms:'Faktor dan Gandaan',en:'Factors and Multiples',free:1},
+ {id:3,ms:'Kuasa Dua, Punca Kuasa Dua, Kuasa Tiga dan Punca Kuasa Tiga',en:'Squares, Square Roots, Cubes and Cube Roots',free:1},
+ {id:4,ms:'Nisbah, Kadar dan Kadaran',en:'Ratios, Rates and Proportions'},
+ {id:5,ms:'Ungkapan Algebra',en:'Algebraic Expressions'},
+ {id:6,ms:'Persamaan Linear',en:'Linear Equations'},
+ {id:7,ms:'Ketaksamaan Linear',en:'Linear Inequalities'},
+ {id:8,ms:'Garis dan Sudut',en:'Lines and Angles'},
+ {id:9,ms:'Poligon Asas',en:'Basic Polygons'},
+ {id:10,ms:'Perimeter dan Luas',en:'Perimeter and Area'},
+ {id:11,ms:'Pengenalan Set',en:'Introduction to Sets'},
+ {id:12,ms:'Pengendalian Data',en:'Data Handling'},
+ {id:13,ms:'Teorem Pythagoras',en:'The Pythagorean Theorem'}
+];
+
+
+
+/* ---------- UI text ---------- */
+const S={
+ streak:T('Hari berturut','Day streak'),xp:T('Mata XP','XP points'),mastery:T('Penguasaan','Mastery'),
+ chapters:T('Bab','Chapters'),free:T('PERCUMA','FREE'),
+ q:T('Soalan','Question'),right:T('Betul! 🎉','Correct! 🎉'),
+ wrong:T('Belum tepat','Not quite'),ans:T('Jawapan','Answer'),next:T('Seterusnya','Next'),finish:T('Lihat keputusan','See results'),
+ again:T('Cuba lagi','Try again'),home:T('Laman utama','Home'),progress:T('Kemajuan','Progress'),
+ report:T('Laporan untuk ibu bapa','Report for parents'),notyet:T('Belum dicuba','Not tried yet'),
+ weakT:T('Perlu ulang kaji:','Needs revision:'),weakNone:T('Tiada topik lemah lagi — teruskan! 💪','No weak topics yet — keep going! 💪'),
+ good:T('Hebat! Anda menguasai topik ini.','Excellent! You have mastered this topic.'),ok:T('Bagus! Sedikit latihan lagi.','Good! A little more practice.'),
+ low:T('Jangan putus asa — baca jalan kira dan cuba lagi.','Don’t give up — read the workings and try again.'),
+ answered:T('soalan dijawab','questions answered'),
+ login:T('Log masuk','Sign in'),logout:T('Log keluar','Sign out'),account:T('Akaun','Account'),
+ loginBanner:T('Log masuk untuk simpan kemajuan di awan dan buka semua bab.','Sign in to save progress in the cloud and unlock every chapter.'),
+ google:T('Teruskan dengan Google','Continue with Google'),or:T('atau guna e-mel','or use email'),
+ email:T('E-mel','Email'),pass:T('Kata laluan (min. 6 aksara)','Password (min. 6 characters)'),
+ signin:T('Masuk','Sign in'),signup:T('Daftar akaun baharu','Create new account'),forgot:T('Lupa kata laluan?','Forgot password?'),
+ resetSent:T('E-mel untuk set semula kata laluan telah dihantar.','Password reset email sent.'),
+ parentNote:T('Akaun ini milik ibu bapa. Kami hanya simpan nama panggilan anak dan kemajuan latihan.','This account belongs to the parent. We only store the child’s nickname and practice progress.'),
+ child:T('Nama panggilan anak','Child’s nickname'),save:T('Simpan','Save'),saved:T('Disimpan ✓','Saved ✓'),
+ plan:T('Pelan','Plan'),freePlan:T('Percuma (Bab 1–3)','Free (Chapters 1–3)'),proUntil:T('PRO aktif hingga','PRO active until'),
+ proTitle:T('Pas Tingkatan 1','Form 1 Pass'),proPrice:T('RM49 / setahun','RM49 / year'),
+ proB:[T('Semua 13 bab KSSM Tingkatan 1','All 13 KSSM Form 1 chapters'),T('Latihan tanpa had dengan jalan kira','Unlimited practice with worked solutions'),T('Laporan kemajuan untuk ibu bapa','Progress report for parents'),T('Kemajuan disimpan di semua peranti','Progress saved across devices')],
+ payFPX:T('Bayar dengan FPX','Pay with FPX'),soonPay:T('Pembayaran akan dibuka tidak lama lagi.','Payments will open soon.'),
+ needLogin:T('Sila log masuk dahulu.','Please sign in first.'),offline:T('Log masuk hanya tersedia pada versi penuh aplikasi.','Sign-in is only available on the full version of the app.'),
+ locked:T('Bab PRO','PRO chapter'),
+ foot:T('Berdasarkan DSKP KSSM Matematik Tingkatan 1','Based on the KSSM Form 1 Mathematics syllabus')
+};
+const ERR={'auth/invalid-credential':T('E-mel atau kata laluan salah.','Wrong email or password.'),'auth/wrong-password':T('E-mel atau kata laluan salah.','Wrong email or password.'),
+ 'auth/user-not-found':T('Akaun tidak dijumpai. Sila daftar.','Account not found. Please sign up.'),'auth/email-already-in-use':T('E-mel ini sudah didaftarkan. Sila masuk.','This email is already registered. Please sign in.'),
+ 'auth/weak-password':T('Kata laluan terlalu pendek (min. 6 aksara).','Password too short (min. 6 characters).'),'auth/invalid-email':T('Format e-mel tidak sah.','Invalid email format.'),
+ 'auth/popup-closed-by-user':T('Tetingkap log masuk ditutup.','Sign-in window was closed.'),'auth/network-request-failed':T('Tiada sambungan internet.','No internet connection.')};
+const errMsg=e=>L(ERR[e&&e.code]||T('Ralat: ','Error: '))+(ERR[e&&e.code]?'':(e&&e.code||e));
+
+/* ---------- access ---------- */
+const isPro=()=>!!(cloud&&cloud.proUntil&&cloud.proUntil>Date.now());
+const canPlay=c=>!!c.free||isPro();
+
+/* ---------- progress logic ---------- */
+function chStat(id){return data.ch[id]||{hist:[],tot:0}}
+function mastery(id){const h=chStat(id).hist;return h.length?Math.round(h.reduce((a,b)=>a+b,0)/h.length*100):null}
+function overall(){const v=CH.map(c=>mastery(c.id)).filter(x=>x!==null);return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):0}
+let saveTimer=null;
+function persist(){
+  if(user&&fbReady){clearTimeout(saveTimer);saveTimer=setTimeout(()=>window.fb.save({progress:data,lang}).catch(()=>{}),1500)}
+  else{localData=data;store.set('mt1_data',data)}
+}
+function record(id,ok){const s=chStat(id);s.hist.push(ok?1:0);if(s.hist.length>20)s.hist.shift();s.tot++;data.ch[id]=s;if(ok)data.xp+=10;
+  const today=new Date().toDateString();
+  if(data.last!==today){const y=new Date(Date.now()-864e5).toDateString();data.streak=data.last===y?data.streak+1:1;data.last=today}
+  persist()}
+function mergeProgress(c,l){ // keep whichever has more practice per chapter
+  const out={ch:{...(c.ch||{})},xp:Math.max(c.xp||0,l.xp||0),streak:Math.max(c.streak||0,l.streak||0),last:c.last||l.last||null};
+  for(const k in (l.ch||{}))if(!out.ch[k]||(l.ch[k].tot>out.ch[k].tot))out.ch[k]=l.ch[k];
+  return out}
+
+/* ---------- firebase hooks (called from module) ---------- */
+window.onFbReady=()=>{fbReady=true;render()};
+window.onUser=(u,profile)=>{
+  authChecked=true;
+  if(u){user=u;cloud=profile||{};const before=JSON.stringify(cloud.progress||{});
+    data=mergeProgress(cloud.progress||blank(),localData);
+    if(JSON.stringify(data)!==before)window.fb.save({progress:data,lang}).catch(()=>{});
+    if(view==='login')view='home';
+  }else{user=null;cloud=null;data=localData}
+  render()};
+
+/* ---------- views ---------- */
+const $=document.getElementById('app');
+let quiz=null,view='home',flash='',busy=false;
+
+function header(){return `<header><div class="logo">Mate<span>T1</span></div><div class="hr">
+<div class="lang"><button class="${lang==='ms'?'on':''}" onclick="setLang('ms')">BM</button><button class="${lang==='en'?'on':''}" onclick="setLang('en')">EN</button></div>
+<button class="acct" onclick="go('${user?'account':'login'}')">${user?(isPro()?'⭐':'👤'):L(S.login)}</button></div></header>`}
+function setLang(l){lang=l;store.set('mt1_lang',l);if(user&&fbReady)window.fb.save({lang}).catch(()=>{});render()}
+function go(v){view=v;flash='';render()}
+
+function home(){
+ const kid=cloud&&cloud.childName?`<div class="hi">Hai, ${esc(cloud.childName)}! 👋</div>`:'';
+ let h=header()+kid+`<div class="hero"><div class="s"><b>🔥 ${data.streak}</b><small>${L(S.streak)}</small></div><div class="s"><b>${data.xp}</b><small>${L(S.xp)}</small></div><div class="s"><b>${overall()}%</b><small>${L(S.mastery)}</small></div></div>`;
+ if(!user)h+=`<button class="banner" onclick="go('login')">☁️ ${L(S.loginBanner)}</button>`;
+ h+=`<div class="nav"><button class="btn ghost" onclick="go('progress')">📊 ${L(S.progress)}</button>${isPro()?'':`<button class="btn acc" onclick="go('pro')">⭐ PRO</button>`}</div><h2>${L(S.chapters)}</h2>`;
+ for(const c of CH){const open=canPlay(c),m=mastery(c.id);
+  h+=`<button class="ch ${open?'':'locked'}" onclick="${open?`startQuiz(${c.id})`:`go('pro')`}"><div class="n">${open?c.id:'🔒'}</div><div class="t"><b>${c[lang]}</b>
+  <small>${open?(m===null?L(S.notyet):m+'% '+L(S.mastery).toLowerCase()):L(S.locked)}</small>${open?`<div class="bar"><i style="width:${m||0}%"></i></div>`:''}</div>
+  ${c.free?`<span class="tag">${L(S.free)}</span>`:`<span class="tag pro">PRO</span>`}</button>`}
+ return h+`<div class="foot">${L(S.foot)}</div>`;
+}
+
+function loginView(){
+ let h=`<div class="top"><button class="x" onclick="go('home')">←</button><b style="font-size:18px">${L(S.login)}</b></div>`;
+ if(!fbReady)return h+`<div class="weak">${authChecked?'':'⏳ '}${L(S.offline)}</div>`;
+ return h+`<div class="panel"><button class="btn gbtn" ${busy?'disabled':''} onclick="doGoogle()"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg> ${L(S.google)}</button>
+ <div class="or">${L(S.or)}</div>
+ <input id="em" type="email" autocomplete="email" placeholder="${L(S.email)}">
+ <input id="pw" type="password" autocomplete="current-password" placeholder="${L(S.pass)}">
+ <button class="btn" ${busy?'disabled':''} onclick="doEmail('in')">${L(S.signin)}</button>
+ <button class="btn ghost" ${busy?'disabled':''} onclick="doEmail('up')">${L(S.signup)}</button>
+ <button class="link" onclick="doReset()">${L(S.forgot)}</button>
+ ${flash?`<div class="msg">${flash}</div>`:''}</div><p class="note">🔒 ${L(S.parentNote)}</p>`}
+async function run(fn){busy=true;flash='';render();try{await fn()}catch(e){flash=errMsg(e)}busy=false;render()}
+function doGoogle(){run(()=>window.fb.google())}
+function creds(){return[document.getElementById('em').value.trim(),document.getElementById('pw').value]}
+function doEmail(m){const [e,p]=creds();run(()=>m==='in'?window.fb.emailIn(e,p):window.fb.emailUp(e,p))}
+function doReset(){const [e]=creds();run(async()=>{await window.fb.reset(e);flash=L(S.resetSent)})}
+
+function accountView(){
+ if(!user)return loginView();
+ const pro=isPro(),until=pro?new Date(cloud.proUntil).toLocaleDateString(lang==='ms'?'ms-MY':'en-GB',{day:'numeric',month:'long',year:'numeric'}):'';
+ return `<div class="top"><button class="x" onclick="go('home')">←</button><b style="font-size:18px">${L(S.account)}</b></div>
+ <div class="panel"><div class="row"><span class="muted">${L(S.email)}</span><b>${esc(user.email||'')}</b></div>
+ <div class="row"><span class="muted">${L(S.plan)}</span><b>${pro?'⭐ '+L(S.proUntil)+' '+until:L(S.freePlan)}</b></div>
+ <label class="muted" style="margin-top:6px">${L(S.child)}</label><input id="kid" maxlength="30" value="${esc(cloud.childName||'')}">
+ <button class="btn" onclick="saveKid()">${L(S.save)}</button>${flash?`<div class="msg">${flash}</div>`:''}</div>
+ ${pro?'':`<button class="btn acc wide" onclick="go('pro')">⭐ ${L(S.proTitle)} — ${L(S.proPrice)}</button>`}
+ <button class="btn ghost wide" onclick="window.fb.out()">${L(S.logout)}</button>`}
+function saveKid(){const v=document.getElementById('kid').value.trim().slice(0,30);cloud.childName=v;run(async()=>{await window.fb.save({childName:v});flash=L(S.saved)})}
+
+function proView(){
+ return `<div class="top"><button class="x" onclick="go('home')">←</button><b style="font-size:18px">PRO</b></div>
+ <div class="procard"><div style="font-size:40px">⭐</div><h3>${L(S.proTitle)}</h3><div class="price">${L(S.proPrice)}</div>
+ <ul>${S.proB.map(b=>`<li>✓ ${L(b)}</li>`).join('')}</ul></div>
+ ${user?`<button class="btn acc wide" disabled>${L(S.payFPX)}</button><p class="note">${L(S.soonPay)}</p>`:`<button class="btn wide" onclick="go('login')">${L(S.login)}</button><p class="note">${L(S.needLogin)}</p>`}`}
+
+function uniqOpts(ans,wr){const A=String(typeof ans==='number'?f(ans):ans);const set=new Set([A]);
+ for(const w of wr){const s=typeof w==='number'?f(w):String(w);if(set.size<4&&s!==A&&!s.includes('NaN'))set.add(s)}
+ let d=1;while(set.size<4){if(typeof ans==='number'){set.add(f(ans+d));set.size<4&&set.add(f(ans-d))}else{set.add(A.replace(/-?−?\d+/,m=>{const n=parseInt(m.replace('−','-'))+d;return f(n)}))}d++}
+ return [...set].slice(0,4).sort(()=>Math.random()-.5)}
+
+function startQuiz(id){const c=CH.find(x=>x.id===id);if(!canPlay(c))return go('pro');
+ const qs=[];for(let i=0;i<10;i++){const g=G[id]();g.opts=uniqOpts(g.a,g.w);g.ans=typeof g.a==='number'?f(g.a):String(g.a);qs.push(g)}
+ quiz={id,qs,i:0,score:0,picked:null};view='quiz';render()}
+
+function quizView(){const q=quiz.qs[quiz.i],c=CH.find(x=>x.id===quiz.id);
+ let h=`<div class="top"><button class="x" onclick="go('home')">✕</button><div class="prog"><i style="width:${(quiz.i+(quiz.picked!==null?1:0))*10}%"></i></div><b>${quiz.score}</b></div>
+ <div class="qcard"><div class="lbl">${L(S.q)} ${quiz.i+1}/10 • ${c[lang]}</div><div class="q">${L(q.q)}${q.m?`<span class="m">${q.m}</span>`:''}</div></div><div class="opts">`;
+ q.opts.forEach((o,k)=>{let cls='';if(quiz.picked!==null){if(o===q.ans)cls='ok';else if(k===quiz.picked)cls='no'}
+  h+=`<button class="opt ${cls}" ${quiz.picked!==null?'disabled':''} onclick="pick(${k})">${o}</button>`});
+ h+='</div>';
+ if(quiz.picked!==null){const ok=q.opts[quiz.picked]===q.ans;
+  h+=`<div class="fb ${ok?'ok':'no'}"><b class="h">${ok?L(S.right):L(S.wrong)+' — '+L(S.ans)+': '+q.ans}</b><div class="sol">${L(q.sol)}</div></div>
+  <div class="nav" style="margin-top:14px"><button class="btn acc" onclick="nextQ()">${quiz.i<9?L(S.next)+' →':L(S.finish)}</button></div>`}
+ return h}
+function pick(k){if(quiz.picked!==null)return;quiz.picked=k;const q=quiz.qs[quiz.i],ok=q.opts[k]===q.ans;if(ok)quiz.score++;record(quiz.id,ok);render()}
+function nextQ(){if(quiz.i<9){quiz.i++;quiz.picked=null;render()}else{view='result';render()}}
+
+function resultView(){const s=quiz.score,c=CH.find(x=>x.id===quiz.id);
+ const msg=s>=8?S.good:s>=5?S.ok:S.low;
+ return `<div class="res"><div style="font-size:48px">${s>=8?'🏆':s>=5?'⭐':'💡'}</div><div class="big">${s}/10</div><p>${c[lang]}</p><p><b>${L(msg)}</b></p><p>+${s*10} XP</p></div>
+ <div class="nav"><button class="btn ghost" onclick="go('home')">${L(S.home)}</button><button class="btn" onclick="startQuiz(${quiz.id})">${L(S.again)}</button></div>`}
+
+function progressView(){
+ const tried=CH.filter(c=>chStat(c.id).tot>0);
+ const weak=tried.filter(c=>{const m=mastery(c.id);return m!==null&&m<60});
+ const total=CH.reduce((a,c)=>a+chStat(c.id).tot,0);
+ const kid=cloud&&cloud.childName?' — '+esc(cloud.childName):'';
+ let h=`<div class="top"><button class="x" onclick="go('home')">←</button><b style="font-size:18px">${L(S.report)}${kid}</b></div>
+ <div class="hero"><div class="s"><b>${total}</b><small>${L(S.answered)}</small></div><div class="s"><b>🔥 ${data.streak}</b><small>${L(S.streak)}</small></div><div class="s"><b>${overall()}%</b><small>${L(S.mastery)}</small></div></div>
+ <div class="weak"><b>${L(S.weakT)}</b><br>${weak.length?weak.map(c=>'• '+c[lang]+' ('+mastery(c.id)+'%)').join('<br>'):L(S.weakNone)}</div>`;
+ for(const c of CH){const m=mastery(c.id);h+=`<div class="stat"><div class="row"><b style="font-size:14px">${c.id}. ${c[lang]}</b><span>${m===null?'—':m+'%'}</span></div><div class="bar"><i style="width:${m||0}%;background:${m!==null&&m<60?'var(--bad)':'var(--good)'}"></i></div></div>`}
+ return h}
+
+function render(){document.documentElement.lang=lang;
+ $.innerHTML=view==='quiz'?quizView():view==='result'?resultView():view==='progress'?progressView():view==='login'?loginView():view==='account'?accountView():view==='pro'?proView():home();
+ if(!['login','account'].includes(view))window.scrollTo(0,0)}
+render();
+
+setTimeout(()=>{if(!fbReady){authChecked=true;render()}},6000);
+</script>
+<script type="module">
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import {getAuth,onAuthStateChanged,GoogleAuthProvider,signInWithPopup,signInWithRedirect,signInWithEmailAndPassword,createUserWithEmailAndPassword,sendPasswordResetEmail,signOut} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import {getFirestore,doc,getDoc,setDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB8ogTYwZt__MIPJWyCoA-CnOxjM5Oow6A",
+  authDomain: "matet1.firebaseapp.com",
+  projectId: "matet1",
+  storageBucket: "matet1.firebasestorage.app",
+  messagingSenderId: "458802645534",
+  appId: "1:458802645534:web:49590f8a3786924e863c0f"
+};
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app), db=getFirestore(app);
+let ref=null;
+
+window.fb={
+  async google(){const p=new GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
+    try{await signInWithPopup(auth,p)}catch(e){if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment')return signInWithRedirect(auth,p);throw e}},
+  emailIn:(e,p)=>signInWithEmailAndPassword(auth,e,p),
+  emailUp:(e,p)=>createUserWithEmailAndPassword(auth,e,p),
+  reset:e=>sendPasswordResetEmail(auth,e),
+  out:()=>signOut(auth),
+  save(fields){if(!ref)return Promise.resolve();return setDoc(ref,{...fields,updatedAt:serverTimestamp()},{merge:true})}
+};
+window.onFbReady&&window.onFbReady();
+
+onAuthStateChanged(auth,async u=>{
+  if(!u){ref=null;window.onUser(null,null);return}
+  ref=doc(db,'users',u.uid);
+  let d={};
+  try{const snap=await getDoc(ref);
+    if(snap.exists())d=snap.data();
+    else{d={email:u.email||'',name:u.displayName||'',childName:'',createdAt:serverTimestamp()};await setDoc(ref,d)}
+  }catch(e){console.error(e)}
+  const pu=d.premiumUntil;
+  window.onUser({uid:u.uid,email:u.email},{...d,proUntil:pu&&pu.toMillis?pu.toMillis():0});
+});
+
+</script>
+</body>
+</html>
