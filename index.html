@@ -90,6 +90,22 @@ h2{font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
 .procard .price{font-size:28px;font-weight:800;color:var(--accent);margin-bottom:10px}
 .procard ul{list-style:none;padding:0;margin:0;text-align:left;line-height:2;font-size:15px}
 
+.welcome{background:var(--navy);color:#fff;border-radius:22px;padding:22px 20px;margin:6px 0 16px}
+.welcome h1{font-size:24px;line-height:1.25;margin:0 0 8px;letter-spacing:-.3px}
+.welcome p{margin:0 0 12px;opacity:.85;font-size:15px;line-height:1.5}
+.welcome ul{list-style:none;padding:0;margin:0 0 6px;line-height:2;font-size:15px}
+.welcome .link{color:#fff;opacity:.9;display:block;margin:8px auto 0}
+.daily{display:flex;align-items:center;gap:12px;background:var(--navy);color:#fff;border-radius:20px;padding:14px;margin:6px 0 10px}
+.ring{position:relative;width:64px;height:64px;flex:0 0 64px}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font-size:17px;font-weight:800}
+.ring b small{font-size:10px;opacity:.7;font-weight:600}
+.ring b{display:flex;align-items:center;justify-content:center}
+.dt{flex:1;min-width:0}.dt b{display:block;font-size:16px}.dt small{opacity:.8;font-size:12px;line-height:1.35;display:block;margin-top:2px}
+.daily .btn{padding:11px 16px}
+.revise{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;border:1.5px solid var(--line);background:var(--card);border-radius:14px;padding:12px 14px;font:inherit;font-size:14px;color:var(--ink);cursor:pointer;margin-bottom:10px;text-align:left}
+.revise .pc{color:var(--bad);font-weight:800}
+.hero{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+
 .foot a,.note a{color:var(--navy);font-weight:600}
 </style>
 </head>
@@ -292,6 +308,13 @@ const S={
  needLogin:T('Sila log masuk dahulu.','Please sign in first.'),offline:T('Log masuk hanya tersedia pada versi penuh aplikasi.','Sign-in is only available on the full version of the app.'),
  locked:T('Bab PRO','PRO chapter'),
  privacy:T('Dasar Privasi','Privacy Policy'),
+ wTitle:T('Latihan Matematik Tingkatan 1, ikut DSKP KSSM','Form 1 Maths practice, following the KSSM syllabus'),
+ wSub:T('Untuk murid Tingkatan 1 — dan ibu bapa yang mahu tahu kemajuan anak.','For Form 1 pupils — and parents who want to see their child’s progress.'),
+ wP:[T('♾️ Soalan tanpa had — setiap set berbeza','♾️ Unlimited questions — every set is different'),T('📝 Jalan kira langkah demi langkah','📝 Step-by-step worked solutions'),T('📊 Laporan kemajuan untuk ibu bapa','📊 Progress report for parents')],
+ tryFree:T('Cuba percuma — Bab 1','Try free — Chapter 1'),haveAcc:T('Sudah ada akaun? Log masuk','Already have an account? Sign in'),
+ daily:T('Latihan Hari Ini','Today’s Practice'),dailySub:T('10 soalan campuran daripada bab yang anda pelajari','10 mixed questions from the chapters you’ve studied'),
+ goal:T('Sasaran harian','Daily goal'),goalDone:T('🎯 Sasaran hari ini tercapai! Teruskan jika mahu.','🎯 Today’s goal reached! Keep going if you like.'),
+ start:T('Mula','Start'),revise:T('Ulang kaji','Revise'),mixed:T('Campuran','Mixed'),
  foot:T('Berdasarkan DSKP KSSM Matematik Tingkatan 1','Based on the KSSM Form 1 Mathematics syllabus')
 };
 const ERR={'auth/invalid-credential':T('E-mel atau kata laluan salah.','Wrong email or password.'),'auth/wrong-password':T('E-mel atau kata laluan salah.','Wrong email or password.'),
@@ -313,7 +336,11 @@ function persist(){
   if(user&&fbReady){clearTimeout(saveTimer);saveTimer=setTimeout(()=>window.fb.save({progress:data,lang}).catch(()=>{}),1500)}
   else{localData=data;store.set('mt1_data',data)}
 }
-function record(id,ok){const s=chStat(id);s.hist.push(ok?1:0);if(s.hist.length>20)s.hist.shift();s.tot++;data.ch[id]=s;if(ok)data.xp+=10;
+const GOAL=20;
+const todayKey=()=>new Date().toDateString();
+const todayCount=()=>data.today&&data.today.d===todayKey()?data.today.n:0;
+function totalAnswered(){return CH.reduce((s,c)=>s+chStat(c.id).tot,0)}
+function record(id,ok){data.today={d:todayKey(),n:todayCount()+1};const s=chStat(id);s.hist.push(ok?1:0);if(s.hist.length>20)s.hist.shift();s.tot++;data.ch[id]=s;if(ok)data.xp+=10;
   const today=new Date().toDateString();
   if(data.last!==today){const y=new Date(Date.now()-864e5).toDateString();data.streak=data.last===y?data.streak+1:1;data.last=today}
   persist()}
@@ -347,9 +374,23 @@ function go(v){view=v;flash='';render()}
 
 function home(){
  const kid=cloud&&cloud.childName?`<div class="hi">Hai, ${esc(cloud.childName)}! 👋</div>`:'';
- let h=header()+kid+`<div class="hero"><div class="s"><b>🔥 ${data.streak}</b><small>${L(S.streak)}</small></div><div class="s"><b>${data.xp}</b><small>${L(S.xp)}</small></div><div class="s"><b>${overall()}%</b><small>${L(S.mastery)}</small></div></div>`;
+ let h=header()+kid;
  if(notice)h+=`<div class="msg" style="margin-bottom:10px">${notice}</div>`;
- if(!user)h+=`<button class="banner" onclick="go('login')">☁️ ${L(S.loginBanner)}</button>`;
+ if(totalAnswered()===0){
+  h+=`<div class="welcome"><h1>${L(S.wTitle)}</h1><p>${L(S.wSub)}</p><ul>${S.wP.map(p=>`<li>${L(p)}</li>`).join('')}</ul>
+  <button class="btn acc wide" onclick="startQuiz(1)">▶ ${L(S.tryFree)}</button>
+  ${user?'':`<button class="link" style="margin-top:8px" onclick="go('login')">${L(S.haveAcc)}</button>`}</div>`;
+ }else{
+  const n=todayCount(),pct=Math.min(n/GOAL,1),C=2*Math.PI*26;
+  const wk=weakest();
+  h+=`<div class="daily"><div class="ring"><svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="7"/>
+  <circle cx="32" cy="32" r="26" fill="none" stroke="var(--accent)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-pct)}" transform="rotate(-90 32 32)"/></svg>
+  <b>${Math.min(n,GOAL)}<small>/${GOAL}</small></b></div><div class="dt"><b>${L(S.daily)}</b><small>${n>=GOAL?L(S.goalDone):L(S.dailySub)}</small></div>
+  <button class="btn acc" onclick="startDaily()">${L(S.start)}</button></div>`;
+  if(wk)h+=`<button class="revise" onclick="startQuiz(${wk.id})"><span>📌 ${L(S.revise)}: <b>${wk[lang]}</b></span><span class="pc">${mastery(wk.id)}%</span></button>`;
+  h+=`<div class="hero"><div class="s"><b>🔥 ${data.streak}</b><small>${L(S.streak)}</small></div><div class="s"><b>${data.xp}</b><small>${L(S.xp)}</small></div><div class="s"><b>${overall()}%</b><small>${L(S.mastery)}</small></div></div>`;
+  if(!user)h+=`<button class="banner" onclick="go('login')">☁️ ${L(S.loginBanner)}</button>`;
+ }
  h+=`<div class="nav"><button class="btn ghost" onclick="go('progress')">📊 ${L(S.progress)}</button>${isPro()?'':`<button class="btn acc" onclick="go('pro')">⭐ PRO</button>`}</div><h2>${L(S.chapters)}</h2>`;
  for(const c of CH){const open=canPlay(c),m=mastery(c.id);
   h+=`<button class="ch ${open?'':'locked'}" onclick="${open?`startQuiz(${c.id})`:`go('pro')`}"><div class="n">${open?c.id:'🔒'}</div><div class="t"><b>${c[lang]}</b>
@@ -419,13 +460,21 @@ function uniqOpts(ans,wr){const A=String(typeof ans==='number'?f(ans):ans);const
  let d=1;while(set.size<4){if(typeof ans==='number'){set.add(f(ans+d));set.size<4&&set.add(f(ans-d))}else{set.add(A.replace(/-?−?\d+/,m=>{const n=parseInt(m.replace('−','-'))+d;return f(n)}))}d++}
  return [...set].slice(0,4).sort(()=>Math.random()-.5)}
 
+function makeQ(cid){const g=G[cid]();g.cid=cid;g.opts=uniqOpts(g.a,g.w);g.ans=typeof g.a==='number'?f(g.a):String(g.a);return g}
 function startQuiz(id){const c=CH.find(x=>x.id===id);if(!canPlay(c))return go('pro');
- const qs=[];for(let i=0;i<10;i++){const g=G[id]();g.opts=uniqOpts(g.a,g.w);g.ans=typeof g.a==='number'?f(g.a):String(g.a);qs.push(g)}
+ const qs=[];for(let i=0;i<10;i++)qs.push(makeQ(id));
  quiz={id,qs,i:0,score:0,picked:null};view='quiz';render()}
+function weakest(){ // lowest-mastery chapter the child has tried and can open, if below 80%
+ const c=CH.filter(c=>canPlay(c)&&chStat(c.id).tot>=5&&mastery(c.id)<80).sort((x,y)=>mastery(x.id)-mastery(y.id));return c[0]||null}
+function startDaily(){
+ let pool=CH.filter(c=>canPlay(c)&&chStat(c.id).tot>0);if(!pool.length)pool=CH.filter(c=>c.free);
+ const w=pool.map(c=>1+(100-(mastery(c.id)??50))/25),sum=w.reduce((s,x)=>s+x,0); // weaker chapters come up more often
+ const qs=[];for(let i=0;i<10;i++){let r=Math.random()*sum,k=0;while(r>w[k]){r-=w[k];k++}qs.push(makeQ(pool[Math.min(k,pool.length-1)].id))}
+ quiz={id:'daily',qs,i:0,score:0,picked:null};view='quiz';render()}
 
-function quizView(){const q=quiz.qs[quiz.i],c=CH.find(x=>x.id===quiz.id);
+function quizView(){const q=quiz.qs[quiz.i],c=CH.find(x=>x.id===q.cid);
  let h=`<div class="top"><button class="x" onclick="go('home')">✕</button><div class="prog"><i style="width:${(quiz.i+(quiz.picked!==null?1:0))*10}%"></i></div><b>${quiz.score}</b></div>
- <div class="qcard"><div class="lbl">${L(S.q)} ${quiz.i+1}/10 • ${c[lang]}</div><div class="q">${L(q.q)}${q.m?`<span class="m">${q.m}</span>`:''}</div></div><div class="opts">`;
+ <div class="qcard"><div class="lbl">${quiz.id==='daily'?'⚡ '+L(S.daily)+' • ':''}${L(S.q)} ${quiz.i+1}/10 • ${c[lang]}</div><div class="q">${L(q.q)}${q.m?`<span class="m">${q.m}</span>`:''}</div></div><div class="opts">`;
  q.opts.forEach((o,k)=>{let cls='';if(quiz.picked!==null){if(o===q.ans)cls='ok';else if(k===quiz.picked)cls='no'}
   h+=`<button class="opt ${cls}" ${quiz.picked!==null?'disabled':''} onclick="pick(${k})">${o}</button>`});
  h+='</div>';
@@ -433,13 +482,13 @@ function quizView(){const q=quiz.qs[quiz.i],c=CH.find(x=>x.id===quiz.id);
   h+=`<div class="fb ${ok?'ok':'no'}"><b class="h">${ok?L(S.right):L(S.wrong)+' — '+L(S.ans)+': '+q.ans}</b><div class="sol">${L(q.sol)}</div></div>
   <div class="nav" style="margin-top:14px"><button class="btn acc" onclick="nextQ()">${quiz.i<9?L(S.next)+' →':L(S.finish)}</button></div>`}
  return h}
-function pick(k){if(quiz.picked!==null)return;quiz.picked=k;const q=quiz.qs[quiz.i],ok=q.opts[k]===q.ans;if(ok)quiz.score++;record(quiz.id,ok);render()}
+function pick(k){if(quiz.picked!==null)return;quiz.picked=k;const q=quiz.qs[quiz.i],ok=q.opts[k]===q.ans;if(ok)quiz.score++;record(q.cid,ok);render()}
 function nextQ(){if(quiz.i<9){quiz.i++;quiz.picked=null;render()}else{view='result';render()}}
 
-function resultView(){const s=quiz.score,c=CH.find(x=>x.id===quiz.id);
+function resultView(){const s=quiz.score,daily=quiz.id==='daily',c=daily?null:CH.find(x=>x.id===quiz.id);
  const msg=s>=8?S.good:s>=5?S.ok:S.low;
- return `<div class="res"><div style="font-size:48px">${s>=8?'🏆':s>=5?'⭐':'💡'}</div><div class="big">${s}/10</div><p>${c[lang]}</p><p><b>${L(msg)}</b></p><p>+${s*10} XP</p></div>
- <div class="nav"><button class="btn ghost" onclick="go('home')">${L(S.home)}</button><button class="btn" onclick="startQuiz(${quiz.id})">${L(S.again)}</button></div>`}
+ return `<div class="res"><div style="font-size:48px">${s>=8?'🏆':s>=5?'⭐':'💡'}</div><div class="big">${s}/10</div><p>${daily?L(S.daily):c[lang]}</p>${daily&&todayCount()>=GOAL?`<p>${L(S.goalDone)}</p>`:''}<p><b>${L(msg)}</b></p><p>+${s*10} XP</p></div>
+ <div class="nav"><button class="btn ghost" onclick="go('home')">${L(S.home)}</button><button class="btn" onclick="${daily?'startDaily()':`startQuiz(${quiz.id})`}">${L(S.again)}</button></div>`}
 
 function progressView(){
  const tried=CH.filter(c=>chStat(c.id).tot>0);
