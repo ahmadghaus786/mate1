@@ -89,6 +89,8 @@ h2{font-size:15px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute
 .procard h3{margin:6px 0 2px;font-size:22px}
 .procard .price{font-size:28px;font-weight:800;color:var(--accent);margin-bottom:10px}
 .procard ul{list-style:none;padding:0;margin:0;text-align:left;line-height:2;font-size:15px}
+
+.foot a,.note a{color:var(--navy);font-weight:600}
 </style>
 </head>
 <body>
@@ -289,6 +291,7 @@ const S={
  secure:T('Pembayaran selamat melalui toyyibPay (FPX). Akses PRO selama 365 hari, tiada pembaharuan automatik.','Secure payment via toyyibPay (FPX). PRO access for 365 days, no automatic renewal.'),
  needLogin:T('Sila log masuk dahulu.','Please sign in first.'),offline:T('Log masuk hanya tersedia pada versi penuh aplikasi.','Sign-in is only available on the full version of the app.'),
  locked:T('Bab PRO','PRO chapter'),
+ privacy:T('Dasar Privasi','Privacy Policy'),
  foot:T('Berdasarkan DSKP KSSM Matematik Tingkatan 1','Based on the KSSM Form 1 Mathematics syllabus')
 };
 const ERR={'auth/invalid-credential':T('E-mel atau kata laluan salah.','Wrong email or password.'),'auth/wrong-password':T('E-mel atau kata laluan salah.','Wrong email or password.'),
@@ -352,7 +355,7 @@ function home(){
   h+=`<button class="ch ${open?'':'locked'}" onclick="${open?`startQuiz(${c.id})`:`go('pro')`}"><div class="n">${open?c.id:'🔒'}</div><div class="t"><b>${c[lang]}</b>
   <small>${open?(m===null?L(S.notyet):m+'% '+L(S.mastery).toLowerCase()):L(S.locked)}</small>${open?`<div class="bar"><i style="width:${m||0}%"></i></div>`:''}</div>
   ${c.free?`<span class="tag">${L(S.free)}</span>`:`<span class="tag pro">PRO</span>`}</button>`}
- return h+`<div class="foot">${L(S.foot)}</div>`;
+ return h+`<div class="foot">${L(S.foot)}<br><a href="privacy.html">${L(S.privacy)}</a></div>`;
 }
 
 function loginView(){
@@ -365,7 +368,7 @@ function loginView(){
  <button class="btn" ${busy?'disabled':''} onclick="doEmail('in')">${L(S.signin)}</button>
  <button class="btn ghost" ${busy?'disabled':''} onclick="doEmail('up')">${L(S.signup)}</button>
  <button class="link" onclick="doReset()">${L(S.forgot)}</button>
- ${flash?`<div class="msg">${flash}</div>`:''}</div><p class="note">🔒 ${L(S.parentNote)}</p>`}
+ ${flash?`<div class="msg">${flash}</div>`:''}</div><p class="note">🔒 ${L(S.parentNote)} <a href="privacy.html">${L(S.privacy)}</a></p>`}
 async function run(fn){busy=true;flash='';render();try{await fn()}catch(e){flash=errMsg(e)}busy=false;render()}
 function doGoogle(){run(()=>window.fb.google())}
 function creds(){return[document.getElementById('em').value.trim(),document.getElementById('pw').value]}
